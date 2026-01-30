@@ -23,11 +23,13 @@ import BookingDetails from './pages/BookingDetails';
 
 // Protected Route
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Navbar />
           <main className="flex-grow">
