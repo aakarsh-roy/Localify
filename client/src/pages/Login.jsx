@@ -122,9 +122,9 @@ const Login = () => {
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600 font-medium mb-2">Demo Credentials:</p>
           <div className="text-xs text-gray-500 space-y-1">
-            <p>Admin: admin@localify.com / admin123</p>
-            <p>User: john@example.com / user123</p>
-            <p>Provider: mike@example.com / provider123</p>
+            {/*<p>Admin: admin@localify.com / admin123</p> */}
+            <p>User: aakarsh@example.com / user123</p>
+            <p>Provider: rajesh.electric@example.com / provider123</p>
           </div>
         </div>
       </div>
