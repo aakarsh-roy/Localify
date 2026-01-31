@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://localify.vercel.app',
+    'https://localify-tau.vercel.app',
     'https://localify-git-main-yourusername.vercel.app',
     process.env.CLIENT_URL
   ].filter(Boolean),
