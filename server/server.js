@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
-// Load environment variables
+// Load env vars
 dotenv.config();
 
 // Connect to database
@@ -11,9 +11,25 @@ connectDB();
 
 const app = express();
 
+// CORS configuration for production
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ message: 'Localify API is running' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -21,26 +37,12 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/providers', require('./routes/providers'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reviews', require('./routes/reviews'));
-app.use('/api/admin', require('./routes/admin'));
 app.use('/api/categories', require('./routes/categories'));
+app.use('/api/admin', require('./routes/admin'));
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({
-    success: false,
-    message: err.message || 'Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
-  });
-});
+// Error handler
+const { errorHandler } = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
