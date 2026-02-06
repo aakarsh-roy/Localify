@@ -72,6 +72,15 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'paid', 'refunded'],
     default: 'pending'
   },
+  paymentId: {
+    type: String
+  },
+  paymentOrderId: {
+    type: String
+  },
+  paidAt: {
+    type: Date
+  },
   ratingSubmitted: {
     type: Boolean,
     default: false

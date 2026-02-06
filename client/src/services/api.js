@@ -101,4 +101,11 @@ export const adminAPI = {
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
 };
 
+// Payment APIs
+export const paymentAPI = {
+  createOrder: (data) => api.post('/payments/create-order', data),
+  verifyPayment: (data) => api.post('/payments/verify', data),
+  getPaymentStatus: (bookingId) => api.get(`/payments/${bookingId}`),
+};
+
 export default api;

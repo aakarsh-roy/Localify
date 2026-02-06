@@ -4,7 +4,7 @@ import {
   Calendar, 
   Clock, 
   Star, 
-  DollarSign,
+  IndianRupee,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -240,8 +240,8 @@ const ProviderDashboard = () => {
                           <span>{booking.scheduledTime}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <DollarSign className="h-4 w-4" />
-                          <span>${booking.service?.price}</span>
+                          <IndianRupee className="h-4 w-4" />
+                          <span>₹{booking.service?.price}</span>
                         </div>
                       </div>
 

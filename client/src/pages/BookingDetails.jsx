@@ -123,7 +123,7 @@ const BookingDetails = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-gray-500 text-sm">Price</p>
-                    <p className="font-semibold text-primary-600">${booking.service?.price}</p>
+                    <p className="font-semibold text-primary-600">₹{booking.service?.price}</p>
                     <p className="text-xs text-gray-500 capitalize">{booking.service?.priceType}</p>
                   </div>
                 </div>

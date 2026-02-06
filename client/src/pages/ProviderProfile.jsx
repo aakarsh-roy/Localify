@@ -184,7 +184,7 @@ const ProviderProfile = () => {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-primary-600">${service.price}</p>
+                          <p className="font-semibold text-primary-600">₹{service.price}</p>
                           <p className="text-xs text-gray-500 capitalize">{service.priceType}</p>
                         </div>
                       </div>

@@ -70,7 +70,7 @@ const BookingCard = ({ booking, showProvider = true }) => {
         <div className="flex items-center justify-between pt-3 border-t">
           <div>
             <span className="text-gray-500 text-sm">Total</span>
-            <p className="font-semibold text-primary-600">${service?.price}</p>
+            <p className="font-semibold text-primary-600">₹{service?.price}</p>
           </div>
           <div className="flex items-center gap-2">
             {status === 'completed' && !ratingSubmitted && (

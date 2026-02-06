@@ -99,7 +99,7 @@ const ProviderCard = ({ provider }) => {
             <div>
               <span className="text-gray-500 text-sm">Starting at</span>
               <p className="font-semibold text-primary-600">
-                ${Math.min(...services.map(s => s.price))}
+                ₹{Math.min(...services.map(s => s.price))}
               </p>
             </div>
           )}

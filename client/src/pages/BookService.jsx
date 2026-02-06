@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, DollarSign, FileText } from 'lucide-react';
-import { providerAPI, bookingAPI } from '../services/api';
+import { Calendar, Clock, MapPin, IndianRupee, FileText, CreditCard } from 'lucide-react';
+import { providerAPI, bookingAPI, paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
@@ -30,7 +30,23 @@ const BookService = () => {
 
   useEffect(() => {
     fetchProvider();
+    loadRazorpayScript();
   }, [providerId]);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (document.getElementById('razorpay-script')) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = 'razorpay-script';
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   const fetchProvider = async () => {
     try {
@@ -82,6 +98,64 @@ const BookService = () => {
     setFormData(prev => ({ ...prev, selectedService: service }));
   };
 
+  const initiatePayment = async (bookingId, amount) => {
+    try {
+      const orderResponse = await paymentAPI.createOrder({
+        amount: amount,
+        bookingId: bookingId
+      });
+
+      const { orderId, keyId } = orderResponse.data.data;
+
+      const options = {
+        key: keyId,
+        amount: amount * 100,
+        currency: 'INR',
+        name: 'Localify',
+        description: `Payment for ${formData.selectedService.name} | Demo: Use NET BANKING to complete payment`,
+        order_id: orderId,
+        handler: async function (response) {
+          try {
+            await paymentAPI.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              bookingId: bookingId
+            });
+            toast.success('Payment successful! Booking confirmed.');
+            navigate('/my-bookings');
+          } catch (error) {
+            toast.error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || ''
+        },
+        notes: {
+          demo_info: 'For demo payments, please select NET BANKING and use any bank to complete the test transaction.'
+        },
+        theme: {
+          color: '#4F46E5'
+        },
+        modal: {
+          ondismiss: function() {
+            toast.error('Payment cancelled');
+            setSubmitting(false);
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error('Payment initiation error:', error);
+      toast.error('Failed to initiate payment');
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,7 +171,7 @@ const BookService = () => {
 
     setSubmitting(true);
     try {
-      await bookingAPI.create({
+      const bookingResponse = await bookingAPI.create({
         providerId,
         service: {
           name: formData.selectedService.name,
@@ -110,11 +184,12 @@ const BookService = () => {
         description: formData.description
       });
 
-      toast.success('Booking request sent successfully!');
-      navigate('/my-bookings');
+      const bookingId = bookingResponse.data.data._id;
+      const amount = formData.selectedService.price;
+
+      await initiatePayment(bookingId, amount);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create booking');
-    } finally {
       setSubmitting(false);
     }
   };
@@ -158,7 +233,7 @@ const BookService = () => {
               {/* Select Service */}
               <div className="card p-6">
                 <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-primary-600" />
+                  <IndianRupee className="h-5 w-5 text-primary-600" />
                   Select Service
                 </h2>
                 <div className="space-y-3">
@@ -187,7 +262,7 @@ const BookService = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-primary-600">${service.price}</p>
+                        <p className="font-semibold text-primary-600">₹{service.price}</p>
                         <p className="text-xs text-gray-500 capitalize">{service.priceType}</p>
                       </div>
                     </label>
@@ -312,12 +387,21 @@ const BookService = () => {
                 />
               </div>
 
+              {/* Demo Payment Info */}
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium">🔵 Demo Mode</p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Use <strong>NET BANKING</strong> and select any bank to complete the test payment.
+                </p>
+              </div>
+
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary w-full py-3"
+                className="btn-primary w-full py-3 flex items-center justify-center gap-2"
               >
-                {submitting ? 'Submitting...' : 'Confirm Booking'}
+                <CreditCard className="h-5 w-5" />
+                {submitting ? 'Processing...' : 'Pay & Confirm Booking'}
               </button>
             </form>
           </div>
@@ -353,7 +437,7 @@ const BookService = () => {
                 <div className="py-4 border-b">
                   <p className="text-sm text-gray-500 mb-1">Scheduled</p>
                   <p className="font-medium text-gray-900">
-                    {new Date(formData.scheduledDate).toLocaleDateString('en-US', {
+                    {new Date(formData.scheduledDate).toLocaleDateString('en-IN', {
                       weekday: 'short',
                       month: 'short',
                       day: 'numeric'
@@ -370,12 +454,18 @@ const BookService = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total</span>
                     <span className="text-2xl font-bold text-primary-600">
-                      ${formData.selectedService.price}
+                      ₹{formData.selectedService.price}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 text-right capitalize">
                     {formData.selectedService.priceType}
                   </p>
+                  <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                    <p className="text-xs text-green-700 flex items-center gap-1">
+                      <CreditCard className="h-4 w-4" />
+                      Secure payment via Razorpay
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
