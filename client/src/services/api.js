@@ -108,4 +108,9 @@ export const paymentAPI = {
   getPaymentStatus: (bookingId) => api.get(`/payments/${bookingId}`),
 };
 
+// Analytics APIs
+export const analyticsAPI = {
+  getProviderAnalytics: (params) => api.get('/analytics/provider', { params }),
+};
+
 export default api;

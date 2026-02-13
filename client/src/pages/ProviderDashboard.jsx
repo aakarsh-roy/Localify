@@ -10,10 +10,29 @@ import {
   AlertCircle,
   Settings,
   User,
-  MessageSquare
+  MessageSquare,
+  TrendingUp,
+  Users,
+  BarChart3,
+  PieChart
 } from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 import { useAuth } from '../context/AuthContext';
-import { providerAPI, bookingAPI, reviewAPI } from '../services/api';
+import { providerAPI, bookingAPI, reviewAPI, analyticsAPI } from '../services/api';
 import StarRating from '../components/ui/StarRating';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
@@ -33,6 +52,9 @@ const ProviderDashboard = () => {
   });
   const [activeTab, setActiveTab] = useState('bookings');
   const [availability, setAvailability] = useState(true);
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState('30');
 
   useEffect(() => {
     if (!provider) {
@@ -41,6 +63,25 @@ const ProviderDashboard = () => {
     }
     fetchDashboardData();
   }, [provider]);
+
+  useEffect(() => {
+    if (activeTab === 'analytics') {
+      fetchAnalytics();
+    }
+  }, [activeTab, analyticsPeriod]);
+
+  const fetchAnalytics = async () => {
+    setAnalyticsLoading(true);
+    try {
+      const response = await analyticsAPI.getProviderAnalytics({ period: analyticsPeriod });
+      setAnalytics(response.data.data);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      toast.error('Failed to load analytics');
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -203,6 +244,17 @@ const ProviderDashboard = () => {
               >
                 Reviews
               </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 ${
+                  activeTab === 'analytics'
+                    ? 'border-primary-600 text-primary-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <BarChart3 className="h-4 w-4" />
+                Analytics
+              </button>
             </nav>
           </div>
 
@@ -325,8 +377,258 @@ const ProviderDashboard = () => {
                 )}
               </div>
             )}
+
+            {activeTab === 'analytics' && (
+              <AnalyticsContent 
+                analytics={analytics}
+                loading={analyticsLoading}
+                period={analyticsPeriod}
+                onPeriodChange={setAnalyticsPeriod}
+              />
+            )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// Chart colors
+const COLORS = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+
+// Analytics Content Component
+const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!analytics) {
+    return (
+      <div className="text-center py-12">
+        <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+        <p className="text-gray-600">No analytics data available</p>
+      </div>
+    );
+  }
+
+  const { summary, revenue, bookingTrends, demographics } = analytics;
+
+  // Prepare status distribution data for pie chart
+  const statusData = Object.entries(bookingTrends.statusDistribution)
+    .filter(([_, value]) => value > 0)
+    .map(([status, count]) => ({
+      name: status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' '),
+      value: count
+    }));
+
+  return (
+    <div className="space-y-6">
+      {/* Period Selector */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Analytics Overview</h3>
+        <select
+          value={period}
+          onChange={(e) => onPeriodChange(e.target.value)}
+          className="input-field w-auto"
+        >
+          <option value="7">Last 7 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="365">Last year</option>
+        </select>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-4 text-white">
+          <div className="flex items-center gap-2 mb-2">
+            <IndianRupee className="h-5 w-5" />
+            <span className="text-sm opacity-90">Period Revenue</span>
+          </div>
+          <p className="text-2xl font-bold">₹{summary.periodRevenue.toLocaleString()}</p>
+          <p className="text-xs opacity-75 mt-1">{summary.periodBookings} bookings</p>
+        </div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="h-5 w-5" />
+            <span className="text-sm opacity-90">Total Revenue</span>
+          </div>
+          <p className="text-2xl font-bold">₹{summary.totalRevenue.toLocaleString()}</p>
+          <p className="text-xs opacity-75 mt-1">All time</p>
+        </div>
+        <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="h-5 w-5" />
+            <span className="text-sm opacity-90">Unique Customers</span>
+          </div>
+          <p className="text-2xl font-bold">{summary.uniqueCustomers}</p>
+          <p className="text-xs opacity-75 mt-1">{summary.repeatRate}% repeat rate</p>
+        </div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+          <div className="flex items-center gap-2 mb-2">
+            <IndianRupee className="h-5 w-5" />
+            <span className="text-sm opacity-90">Avg Order Value</span>
+          </div>
+          <p className="text-2xl font-bold">₹{summary.avgOrderValue.toLocaleString()}</p>
+          <p className="text-xs opacity-75 mt-1">Per booking</p>
+        </div>
+      </div>
+
+      {/* Revenue Chart */}
+      <div className="bg-white border rounded-xl p-6">
+        <h4 className="font-semibold text-gray-900 mb-4">Revenue Trend</h4>
+        {revenue.daily.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={revenue.daily}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+              />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip 
+                formatter={(value, name) => [
+                  name === 'revenue' ? `₹${value.toLocaleString()}` : value,
+                  name === 'revenue' ? 'Revenue' : 'Bookings'
+                ]}
+                labelFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { 
+                  weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' 
+                })}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="revenue" 
+                stroke="#4F46E5" 
+                strokeWidth={2}
+                dot={{ fill: '#4F46E5', strokeWidth: 2 }}
+                name="Revenue"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="bookings" 
+                stroke="#10B981" 
+                strokeWidth={2}
+                dot={{ fill: '#10B981', strokeWidth: 2 }}
+                name="Bookings"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[300px] flex items-center justify-center text-gray-500">
+            No revenue data for this period
+          </div>
+        )}
+      </div>
+
+      {/* Monthly Revenue */}
+      {revenue.monthly.length > 0 && (
+        <div className="bg-white border rounded-xl p-6">
+          <h4 className="font-semibold text-gray-900 mb-4">Monthly Revenue</h4>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={revenue.monthly}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip 
+                formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
+              />
+              <Bar dataKey="revenue" fill="#4F46E5" radius={[4, 4, 0, 0]} name="Revenue" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Booking Status Distribution */}
+        {statusData.length > 0 && (
+          <div className="bg-white border rounded-xl p-6">
+            <h4 className="font-semibold text-gray-900 mb-4">Booking Status Distribution</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <RechartsPieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {statusData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </RechartsPieChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Service Popularity */}
+        {bookingTrends.servicePopularity.length > 0 && (
+          <div className="bg-white border rounded-xl p-6">
+            <h4 className="font-semibold text-gray-900 mb-4">Top Services</h4>
+            <div className="space-y-3">
+              {bookingTrends.servicePopularity.slice(0, 5).map((service, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-medium">
+                      {index + 1}
+                    </span>
+                    <span className="text-gray-900 font-medium">{service.service}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-900 font-semibold">₹{service.revenue.toLocaleString()}</span>
+                    <span className="text-gray-500 text-sm ml-2">({service.bookings} bookings)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Customer Demographics */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* By City */}
+        {demographics.byCity.length > 0 && (
+          <div className="bg-white border rounded-xl p-6">
+            <h4 className="font-semibold text-gray-900 mb-4">Customers by City</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={demographics.byCity} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis type="number" tick={{ fontSize: 12 }} />
+                <YAxis dataKey="city" type="category" width={100} tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="customers" fill="#10B981" radius={[0, 4, 4, 0]} name="Customers" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Peak Hours */}
+        {demographics.peakHours.length > 0 && (
+          <div className="bg-white border rounded-xl p-6">
+            <h4 className="font-semibold text-gray-900 mb-4">Peak Booking Hours</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={demographics.peakHours}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="bookings" fill="#F59E0B" radius={[4, 4, 0, 0]} name="Bookings" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </div>
   );
