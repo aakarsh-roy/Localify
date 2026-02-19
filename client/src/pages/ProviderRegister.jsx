@@ -4,10 +4,12 @@ import {
   MapPin, 
   Briefcase, 
   Clock, 
-  DollarSign,
+  IndianRupee,
   Plus,
   X,
-  CheckCircle
+  CheckCircle,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { providerAPI, categoryAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -165,18 +167,23 @@ const ProviderRegister = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50/50 py-8">
+      <div className="max-w-3xl mx-auto px-4 animate-fade-in">
         <div className="text-center mb-8">
+          <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+            <Sparkles className="h-7 w-7 text-white" />
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Become a Service Provider</h1>
-          <p className="text-gray-600 mt-2">Join our network and grow your business</p>
+          <p className="text-gray-500 mt-2">Join our network and grow your business</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Business Info */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-primary-600" />
+           <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+             <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+               <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                 <Briefcase className="h-4 w-4 text-primary-600" />
+               </div>
               Business Information
             </h2>
             <div className="space-y-4">
@@ -226,9 +233,11 @@ const ProviderRegister = () => {
           </div>
 
           {/* Location */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-primary-600" />
+           <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+             <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+               <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                 <MapPin className="h-4 w-4 text-primary-600" />
+               </div>
               Location
             </h2>
             <div className="space-y-4">
@@ -306,10 +315,12 @@ const ProviderRegister = () => {
           </div>
 
           {/* Services */}
-          <div className="card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-primary-600" />
+           <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+             <div className="flex items-center justify-between mb-4">
+               <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+                 <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                   <IndianRupee className="h-4 w-4 text-primary-600" />
+                 </div>
                 Services Offered
               </h2>
               <button
@@ -323,7 +334,7 @@ const ProviderRegister = () => {
             </div>
             <div className="space-y-4">
               {formData.services.map((service, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg relative">
+                <div key={index} className="p-4 bg-gray-50/80 rounded-xl relative border border-gray-100">
                   {formData.services.length > 1 && (
                     <button
                       type="button"
@@ -407,9 +418,11 @@ const ProviderRegister = () => {
           </div>
 
           {/* Availability */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary-600" />
+           <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+             <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+               <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                 <Clock className="h-4 w-4 text-primary-600" />
+               </div>
               Availability
             </h2>
             <div className="space-y-4">
@@ -423,9 +436,9 @@ const ProviderRegister = () => {
                       key={day}
                       type="button"
                       onClick={() => handleWorkingDayToggle(day)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
+                      className={`px-3 py-2 rounded-xl text-sm font-semibold capitalize transition-all ${
                         formData.availability.workingDays.includes(day)
-                          ? 'bg-primary-600 text-white'
+                          ? 'bg-primary-600 text-white shadow-sm'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
@@ -476,14 +489,15 @@ const ProviderRegister = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="btn-primary w-full py-3 flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              'Submitting...'
-            ) : (
-              <>
-                <CheckCircle className="h-5 w-5" />
-                Register as Provider
+             className="btn-primary w-full py-3 flex items-center justify-center gap-2 text-base"
+           >
+             {submitting ? (
+               'Submitting...'
+             ) : (
+               <>
+                 <CheckCircle className="h-5 w-5" />
+                 Register as Provider
+                 <ArrowRight className="h-5 w-5" />
               </>
             )}
           </button>

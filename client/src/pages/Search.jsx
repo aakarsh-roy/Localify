@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, MapPin, SlidersHorizontal, X } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, X, SearchX } from 'lucide-react';
 import { providerAPI, categoryAPI } from '../services/api';
 import ProviderCard from '../components/providers/ProviderCard';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -92,15 +92,17 @@ const SearchPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const activeFilterCount = Object.values(filters).filter(v => v && v !== 'rating').length;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Search Header */}
-      <div className="bg-white border-b sticky top-16 z-40">
+      <div className="glass border-b border-gray-200/60 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-3">
             {/* Search Input */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search services..."
@@ -113,7 +115,7 @@ const SearchPage = () => {
 
             {/* Location Input */}
             <div className="flex-1 relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-gray-400" />
               <input
                 type="text"
                 placeholder="City"
@@ -127,10 +129,15 @@ const SearchPage = () => {
             {/* Filter Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="btn-secondary flex items-center gap-2"
+              className={`btn-secondary flex items-center gap-2 relative ${showFilters ? '!bg-primary-50 !text-primary-700 !border-primary-200' : ''}`}
             >
-              <SlidersHorizontal className="h-5 w-5" />
+              <SlidersHorizontal className="h-4 w-4" />
               Filters
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
 
             <button onClick={applyFilters} className="btn-primary">
@@ -140,11 +147,11 @@ const SearchPage = () => {
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-sm animate-fade-in-down">
               <div className="flex flex-wrap gap-4">
                 {/* Category */}
-                <div className="w-full sm:w-auto">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="w-full sm:w-auto sm:min-w-[180px]">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                     Category
                   </label>
                   <select
@@ -162,8 +169,8 @@ const SearchPage = () => {
                 </div>
 
                 {/* Min Rating */}
-                <div className="w-full sm:w-auto">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="w-full sm:w-auto sm:min-w-[160px]">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                     Minimum Rating
                   </label>
                   <select
@@ -179,8 +186,8 @@ const SearchPage = () => {
                 </div>
 
                 {/* Sort By */}
-                <div className="w-full sm:w-auto">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="w-full sm:w-auto sm:min-w-[160px]">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                     Sort By
                   </label>
                   <select
@@ -197,7 +204,7 @@ const SearchPage = () => {
                 <div className="w-full sm:w-auto flex items-end">
                   <button
                     onClick={clearFilters}
-                    className="text-gray-600 hover:text-gray-900 text-sm flex items-center gap-1"
+                    className="text-gray-500 hover:text-red-600 text-sm flex items-center gap-1.5 font-medium transition-colors"
                   >
                     <X className="h-4 w-4" />
                     Clear All
@@ -213,22 +220,34 @@ const SearchPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Results Count */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">
-            {loading ? 'Searching...' : `${pagination.total} providers found`}
+          <p className="text-sm text-gray-500 font-medium">
+            {loading ? (
+              <span className="inline-flex items-center gap-2">
+                <LoadingSpinner size="sm" />
+                Searching...
+              </span>
+            ) : (
+              <>{pagination.total} provider{pagination.total !== 1 ? 's' : ''} found</>
+            )}
           </p>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <LoadingSpinner size="lg" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <LoadingSpinner key={i} variant="skeleton" />
+            ))}
           </div>
         ) : providers.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-gray-400" />
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <SearchX className="h-10 w-10 text-gray-300" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No providers found</h3>
+            <p className="text-gray-500 mb-6">Try adjusting your search or filters to find what you need</p>
+            <button onClick={clearFilters} className="btn-secondary">
+              Clear All Filters
+            </button>
           </div>
         ) : (
           <>
@@ -240,11 +259,11 @@ const SearchPage = () => {
 
             {/* Pagination */}
             {pagination.pages > 1 && (
-              <div className="flex justify-center mt-8 gap-2">
+              <div className="flex justify-center mt-10 gap-2">
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="btn-secondary disabled:opacity-50"
+                  className="btn-secondary !py-2 disabled:opacity-40"
                 >
                   Previous
                 </button>
@@ -253,10 +272,10 @@ const SearchPage = () => {
                   <button
                     key={i + 1}
                     onClick={() => handlePageChange(i + 1)}
-                    className={`px-4 py-2 rounded-lg ${
+                    className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
                       pagination.page === i + 1
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                     }`}
                   >
                     {i + 1}
@@ -266,7 +285,7 @@ const SearchPage = () => {
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page === pagination.pages}
-                  className="btn-secondary disabled:opacity-50"
+                  className="btn-secondary !py-2 disabled:opacity-40"
                 >
                   Next
                 </button>

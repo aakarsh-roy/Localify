@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, Search, User, Settings, MapPin } from 'lucide-react';
+import { Calendar, Search, User, Settings, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../services/api';
 import BookingCard from '../components/bookings/BookingCard';
@@ -50,61 +50,65 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50/50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
         {/* Welcome Section */}
         <div className="mb-8">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="h-5 w-5 text-amber-400" />
+            <span className="text-sm font-medium text-primary-600">Dashboard</span>
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">
             Welcome back, {user?.name?.split(' ')[0]}!
           </h1>
-          <p className="text-gray-600">Here's what's happening with your bookings</p>
+          <p className="text-gray-500 mt-1">Here's what's happening with your bookings</p>
         </div>
 
         {/* Quick Actions */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Link to="/search" className="card p-4 hover:shadow-md transition-shadow group">
+          <Link to="/search" className="card-interactive p-4 group">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-colors">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
                 <Search className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Find Services</p>
+                <p className="font-semibold text-gray-900">Find Services</p>
                 <p className="text-sm text-gray-500">Browse providers</p>
               </div>
             </div>
           </Link>
 
-          <Link to="/my-bookings" className="card p-4 hover:shadow-md transition-shadow group">
+          <Link to="/my-bookings" className="card-interactive p-4 group">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <Calendar className="h-6 w-6 text-green-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
+                <Calendar className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">My Bookings</p>
+                <p className="font-semibold text-gray-900">My Bookings</p>
                 <p className="text-sm text-gray-500">{stats.total} total</p>
               </div>
             </div>
           </Link>
 
-          <Link to="/become-provider" className="card p-4 hover:shadow-md transition-shadow group">
+          <Link to="/become-provider" className="card-interactive p-4 group">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                <User className="h-6 w-6 text-purple-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
+                <User className="h-6 w-6 text-violet-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Become Provider</p>
+                <p className="font-semibold text-gray-900">Become Provider</p>
                 <p className="text-sm text-gray-500">Offer services</p>
               </div>
             </div>
           </Link>
 
-          <div className="card p-4">
+          <div className="card-interactive p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center">
                 <Settings className="h-6 w-6 text-gray-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Settings</p>
+                <p className="font-semibold text-gray-900">Settings</p>
                 <p className="text-sm text-gray-500">Edit profile</p>
               </div>
             </div>
@@ -113,33 +117,36 @@ const UserDashboard = () => {
 
         {/* Stats */}
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
-          <div className="card p-6">
-            <p className="text-sm text-gray-500 mb-1">Total Bookings</p>
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Bookings</p>
             <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-500 mb-1">Pending</p>
-            <p className="text-3xl font-bold text-yellow-600">{stats.pending}</p>
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Pending</p>
+            <p className="text-3xl font-bold text-amber-600">{stats.pending}</p>
           </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-500 mb-1">Completed</p>
-            <p className="text-3xl font-bold text-green-600">{stats.completed}</p>
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Completed</p>
+            <p className="text-3xl font-bold text-emerald-600">{stats.completed}</p>
           </div>
         </div>
 
         {/* Recent Bookings */}
-        <div className="card">
-          <div className="p-6 border-b flex items-center justify-between">
+        <div className="bg-white rounded-2xl shadow-card border border-gray-100">
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">Recent Bookings</h2>
-            <Link to="/my-bookings" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            <Link to="/my-bookings" className="text-primary-600 hover:text-primary-700 text-sm font-medium inline-flex items-center gap-1 group">
               View All
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
           <div className="p-6">
             {bookings.length === 0 ? (
               <div className="text-center py-8">
-                <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-600 mb-2">No bookings yet</p>
+                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <Calendar className="h-7 w-7 text-gray-400" />
+                </div>
+                <p className="text-gray-500 mb-2">No bookings yet</p>
                 <Link to="/search" className="text-primary-600 hover:text-primary-700 font-medium">
                   Find a service provider
                 </Link>

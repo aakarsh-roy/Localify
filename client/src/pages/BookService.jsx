@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, IndianRupee, FileText, CreditCard } from 'lucide-react';
+import { Calendar, Clock, MapPin, IndianRupee, FileText, CreditCard, ArrowRight, ShieldCheck } from 'lucide-react';
 import { providerAPI, bookingAPI, paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -222,28 +222,35 @@ const BookService = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Book a Service</h1>
+    <div className="min-h-screen bg-gray-50/50 py-8">
+      <div className="max-w-4xl mx-auto px-4 animate-fade-in">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md">
+            <Calendar className="h-5 w-5 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Book a Service</h1>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Booking Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Select Service */}
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <IndianRupee className="h-5 w-5 text-primary-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                    <IndianRupee className="h-4 w-4 text-primary-600" />
+                  </div>
                   Select Service
                 </h2>
                 <div className="space-y-3">
                   {provider.services?.map((service, index) => (
                     <label
                       key={index}
-                      className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${
                         formData.selectedService?.name === service.name
-                          ? 'border-primary-600 bg-primary-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-primary-500 bg-primary-50/50 ring-1 ring-primary-200'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -271,9 +278,11 @@ const BookService = () => {
               </div>
 
               {/* Date & Time */}
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                    <Calendar className="h-4 w-4 text-primary-600" />
+                  </div>
                   Select Date & Time
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -308,9 +317,11 @@ const BookService = () => {
               </div>
 
               {/* Service Address */}
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                    <MapPin className="h-4 w-4 text-primary-600" />
+                  </div>
                   Service Address
                 </h2>
                 <div className="space-y-4">
@@ -372,9 +383,11 @@ const BookService = () => {
               </div>
 
               {/* Additional Details */}
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-primary-600" />
+                  </div>
                   Additional Details
                 </h2>
                 <textarea
@@ -388,9 +401,9 @@ const BookService = () => {
               </div>
 
               {/* Demo Payment Info */}
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium">🔵 Demo Mode</p>
-                <p className="text-xs text-blue-700 mt-1">
+              <div className="mb-4 p-4 bg-blue-50/80 border border-blue-200/60 rounded-xl">
+                <p className="text-sm text-blue-800 font-semibold">Demo Mode</p>
+                <p className="text-xs text-blue-600 mt-1">
                   Use <strong>NET BANKING</strong> and select any bank to complete the test payment.
                 </p>
               </div>
@@ -398,23 +411,24 @@ const BookService = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary w-full py-3 flex items-center justify-center gap-2"
+                className="btn-primary w-full py-3 flex items-center justify-center gap-2 text-base"
               >
                 <CreditCard className="h-5 w-5" />
                 {submitting ? 'Processing...' : 'Pay & Confirm Booking'}
+                {!submitting && <ArrowRight className="h-5 w-5" />}
               </button>
             </form>
           </div>
 
           {/* Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="card p-6 sticky top-24">
+            <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6 sticky top-24">
               <h2 className="font-semibold text-gray-900 mb-4">Booking Summary</h2>
               
               {/* Provider Info */}
-              <div className="flex items-center gap-3 pb-4 border-b">
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <span className="text-primary-600 font-bold">
+              <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <span className="text-white font-bold">
                     {provider.businessName?.charAt(0)}
                   </span>
                 </div>
@@ -426,7 +440,7 @@ const BookService = () => {
 
               {/* Selected Service */}
               {formData.selectedService && (
-                <div className="py-4 border-b">
+                <div className="py-4 border-b border-gray-100">
                   <p className="text-sm text-gray-500 mb-1">Selected Service</p>
                   <p className="font-medium text-gray-900">{formData.selectedService.name}</p>
                 </div>
@@ -434,7 +448,7 @@ const BookService = () => {
 
               {/* Date & Time */}
               {formData.scheduledDate && formData.scheduledTime && (
-                <div className="py-4 border-b">
+                <div className="py-4 border-b border-gray-100">
                   <p className="text-sm text-gray-500 mb-1">Scheduled</p>
                   <p className="font-medium text-gray-900">
                     {new Date(formData.scheduledDate).toLocaleDateString('en-IN', {
@@ -460,9 +474,9 @@ const BookService = () => {
                   <p className="text-xs text-gray-500 text-right capitalize">
                     {formData.selectedService.priceType}
                   </p>
-                  <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                    <p className="text-xs text-green-700 flex items-center gap-1">
-                      <CreditCard className="h-4 w-4" />
+                  <div className="mt-4 p-3 bg-emerald-50/80 rounded-xl border border-emerald-100">
+                    <p className="text-xs text-emerald-700 flex items-center gap-1.5 font-medium">
+                      <ShieldCheck className="h-4 w-4" />
                       Secure payment via Razorpay
                     </p>
                   </div>

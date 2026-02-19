@@ -40,7 +40,7 @@ const ReviewForm = ({ bookingId, onSuccess }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Your Rating
         </label>
         <StarRating
@@ -53,7 +53,7 @@ const ReviewForm = ({ bookingId, onSuccess }) => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Your Review
         </label>
         <textarea
@@ -64,7 +64,7 @@ const ReviewForm = ({ bookingId, onSuccess }) => {
           placeholder="Share your experience with this service provider..."
           className="input-field resize-none"
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-gray-400 mt-1">
           {comment.length}/500 characters
         </p>
       </div>

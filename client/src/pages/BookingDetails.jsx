@@ -63,12 +63,12 @@ const BookingDetails = () => {
   };
 
   const statusConfig = {
-    'pending': { color: 'bg-yellow-100 text-yellow-700', icon: AlertCircle },
-    'accepted': { color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
-    'in-progress': { color: 'bg-purple-100 text-purple-700', icon: Clock },
-    'completed': { color: 'bg-green-100 text-green-700', icon: CheckCircle },
-    'cancelled': { color: 'bg-gray-100 text-gray-600', icon: XCircle },
-    'rejected': { color: 'bg-red-100 text-red-700', icon: XCircle }
+    'pending': { color: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200/60', icon: AlertCircle },
+    'accepted': { color: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200/60', icon: CheckCircle },
+    'in-progress': { color: 'bg-violet-50 text-violet-700 ring-1 ring-violet-200/60', icon: Clock },
+    'completed': { color: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60', icon: CheckCircle },
+    'cancelled': { color: 'bg-gray-50 text-gray-600 ring-1 ring-gray-200/60', icon: XCircle },
+    'rejected': { color: 'bg-red-50 text-red-700 ring-1 ring-red-200/60', icon: XCircle }
   };
 
   if (loading) {
@@ -95,17 +95,17 @@ const BookingDetails = () => {
   const canReview = booking.status === 'completed' && !booking.ratingSubmitted && user?.role === 'user';
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50/50 py-8">
+      <div className="max-w-4xl mx-auto px-4 animate-fade-in">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
-            <p className="text-gray-600">Booking ID: {booking._id}</p>
+            <p className="text-sm text-gray-500 mt-1 font-mono">ID: {booking._id}</p>
           </div>
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig[booking.status]?.color}`}>
-            <StatusIcon className="h-5 w-5" />
-            <span className="font-medium capitalize">{booking.status}</span>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold ${statusConfig[booking.status]?.color}`}>
+            <StatusIcon className="h-4 w-4" />
+            <span className="capitalize">{booking.status}</span>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ const BookingDetails = () => {
           {/* Main Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Service Details */}
-            <div className="card p-6">
+            <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Service Details</h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
@@ -138,11 +138,11 @@ const BookingDetails = () => {
             </div>
 
             {/* Schedule */}
-            <div className="card p-6">
+            <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Schedule</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center">
                     <Calendar className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
@@ -158,7 +158,7 @@ const BookingDetails = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center">
                     <Clock className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ const BookingDetails = () => {
 
             {/* Address */}
             {booking.address && (
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4">Service Location</h2>
                 <div className="flex items-start gap-3">
                   <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
@@ -187,12 +187,12 @@ const BookingDetails = () => {
 
             {/* Status History */}
             {booking.statusHistory && booking.statusHistory.length > 0 && (
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4">Status History</h2>
                 <div className="space-y-3">
                   {booking.statusHistory.map((item, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-primary-600 rounded-full"></div>
+                      <div className="w-2.5 h-2.5 bg-primary-500 rounded-full ring-4 ring-primary-100"></div>
                       <div className="flex-1 flex items-center justify-between">
                         <span className="capitalize text-gray-700">{item.status}</span>
                         <span className="text-sm text-gray-500">
@@ -207,7 +207,7 @@ const BookingDetails = () => {
 
             {/* Review Form */}
             {canReview && (
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4">
                   {showReviewForm ? 'Write a Review' : 'How was your experience?'}
                 </h2>
@@ -228,14 +228,14 @@ const BookingDetails = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Provider Info */}
-            <div className="card p-6">
+            <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Service Provider</h2>
               <Link 
                 to={`/provider/${booking.provider?._id}`}
                 className="flex items-center gap-3 mb-4 group"
               >
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <span className="text-primary-600 font-bold">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <span className="text-white font-bold">
                     {booking.provider?.businessName?.charAt(0)}
                   </span>
                 </div>
@@ -264,12 +264,12 @@ const BookingDetails = () => {
             </div>
 
             {/* Actions */}
-            <div className="card p-6">
+            <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Actions</h2>
               <div className="space-y-3">
                 <Link
                   to={`/provider/${booking.provider?._id}`}
-                  className="btn-secondary w-full text-center"
+                  className="btn-secondary w-full text-center block"
                 >
                   View Provider Profile
                 </Link>
@@ -278,7 +278,7 @@ const BookingDetails = () => {
                   <button
                     onClick={handleCancel}
                     disabled={cancelling}
-                    className="w-full py-2 px-4 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                    className="btn-danger w-full"
                   >
                     {cancelling ? 'Cancelling...' : 'Cancel Booking'}
                   </button>
@@ -288,7 +288,7 @@ const BookingDetails = () => {
 
             {/* Notes */}
             {(booking.providerNote || booking.cancellationReason) && (
-              <div className="card p-6">
+              <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-4">Notes</h2>
                 {booking.providerNote && (
                   <div className="mb-3">

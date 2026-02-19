@@ -139,12 +139,12 @@ const ProviderDashboard = () => {
   };
 
   const statusColors = {
-    'pending': 'bg-yellow-100 text-yellow-700',
-    'accepted': 'bg-blue-100 text-blue-700',
-    'in-progress': 'bg-purple-100 text-purple-700',
-    'completed': 'bg-green-100 text-green-700',
-    'cancelled': 'bg-gray-100 text-gray-600',
-    'rejected': 'bg-red-100 text-red-700'
+    'pending': 'bg-amber-50 text-amber-700 ring-1 ring-amber-200/60',
+    'accepted': 'bg-blue-50 text-blue-700 ring-1 ring-blue-200/60',
+    'in-progress': 'bg-violet-50 text-violet-700 ring-1 ring-violet-200/60',
+    'completed': 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60',
+    'cancelled': 'bg-gray-50 text-gray-600 ring-1 ring-gray-200/60',
+    'rejected': 'bg-red-50 text-red-700 ring-1 ring-red-200/60'
   };
 
   if (loading) {
@@ -156,28 +156,33 @@ const ProviderDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50/50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Welcome, {user?.name?.split(' ')[0]}!
-            </h1>
-            <p className="text-gray-600">{provider?.businessName}</p>
-          </div>
           <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-lg">{user?.name?.charAt(0)}</span>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Welcome, {user?.name?.split(' ')[0]}!
+              </h1>
+              <p className="text-gray-500">{provider?.businessName}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
             {provider?.verificationStatus === 'pending' && (
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
+              <span className="px-3 py-1.5 bg-amber-50 text-amber-700 ring-1 ring-amber-200/60 rounded-xl text-sm font-semibold">
                 Pending Verification
               </span>
             )}
             <button
               onClick={toggleAvailability}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-xl font-semibold ring-1 transition-colors ${
                 availability
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-emerald-50 text-emerald-700 ring-emerald-200/60 hover:bg-emerald-100'
+                  : 'bg-gray-50 text-gray-600 ring-gray-200/60 hover:bg-gray-100'
               }`}
             >
               {availability ? 'Available' : 'Unavailable'}
@@ -187,42 +192,50 @@ const ProviderDashboard = () => {
 
         {/* Stats */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="card p-6">
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-2">
-              <Calendar className="h-8 w-8 text-primary-600" />
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-primary-600" />
+              </div>
               <span className="text-3xl font-bold text-gray-900">{stats.totalBookings}</span>
             </div>
-            <p className="text-gray-500">Total Bookings</p>
+            <p className="text-sm font-medium text-gray-500">Total Bookings</p>
           </div>
-          <div className="card p-6">
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-2">
-              <AlertCircle className="h-8 w-8 text-yellow-600" />
+              <div className="w-10 h-10 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-amber-600" />
+              </div>
               <span className="text-3xl font-bold text-gray-900">{stats.pending}</span>
             </div>
-            <p className="text-gray-500">Pending Requests</p>
+            <p className="text-sm font-medium text-gray-500">Pending Requests</p>
           </div>
-          <div className="card p-6">
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-2">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
+              </div>
               <span className="text-3xl font-bold text-gray-900">{stats.completed}</span>
             </div>
-            <p className="text-gray-500">Completed Jobs</p>
+            <p className="text-sm font-medium text-gray-500">Completed Jobs</p>
           </div>
-          <div className="card p-6">
+          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-2">
-              <Star className="h-8 w-8 text-yellow-500" />
+              <div className="w-10 h-10 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl flex items-center justify-center">
+                <Star className="h-5 w-5 text-amber-500" />
+              </div>
               <div className="text-right">
                 <span className="text-3xl font-bold text-gray-900">{stats.avgRating.toFixed(1)}</span>
-                <p className="text-sm text-gray-500">({stats.totalReviews} reviews)</p>
+                <p className="text-xs text-gray-500">({stats.totalReviews} reviews)</p>
               </div>
             </div>
-            <p className="text-gray-500">Average Rating</p>
+            <p className="text-sm font-medium text-gray-500">Average Rating</p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="card">
-          <div className="border-b">
+        <div className="bg-white rounded-2xl shadow-card border border-gray-100">
+          <div className="border-b border-gray-100">
             <nav className="flex">
               <button
                 onClick={() => setActiveTab('bookings')}
@@ -268,7 +281,7 @@ const ProviderDashboard = () => {
                   </div>
                 ) : (
                   bookings.map((booking) => (
-                    <div key={booking._id} className="border rounded-lg p-4">
+                    <div key={booking._id} className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-medium text-gray-900">{booking.service?.name}</h3>
@@ -277,7 +290,7 @@ const ProviderDashboard = () => {
                             <span>{booking.user?.name}</span>
                           </div>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[booking.status]}`}>
+                        <span className={`px-3 py-1 rounded-xl text-xs font-semibold capitalize ${statusColors[booking.status]}`}>
                           {booking.status}
                         </span>
                       </div>
@@ -346,11 +359,11 @@ const ProviderDashboard = () => {
                   </div>
                 ) : (
                   reviews.map((review) => (
-                    <div key={review._id} className="border rounded-lg p-4">
+                    <div key={review._id} className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                            <User className="h-5 w-5 text-gray-500" />
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center">
+                            <span className="text-primary-700 font-semibold text-sm">{review.user?.name?.charAt(0)}</span>
                           </div>
                           <div>
                             <p className="font-medium text-gray-900">{review.user?.name}</p>
@@ -365,7 +378,7 @@ const ProviderDashboard = () => {
                       <p className="text-gray-600 mb-3">{review.comment}</p>
 
                       {review.providerResponse ? (
-                        <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="bg-gray-50/80 rounded-xl p-3">
                           <p className="text-sm font-medium text-gray-700 mb-1">Your Response:</p>
                           <p className="text-sm text-gray-600">{review.providerResponse.comment}</p>
                         </div>
@@ -479,7 +492,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       </div>
 
       {/* Revenue Chart */}
-      <div className="bg-white border rounded-xl p-6">
+      <div className="bg-white border border-gray-100 rounded-2xl p-6">
         <h4 className="font-semibold text-gray-900 mb-4">Revenue Trend</h4>
         {revenue.daily.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
@@ -528,7 +541,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
 
       {/* Monthly Revenue */}
       {revenue.monthly.length > 0 && (
-        <div className="bg-white border rounded-xl p-6">
+        <div className="bg-white border border-gray-100 rounded-2xl p-6">
           <h4 className="font-semibold text-gray-900 mb-4">Monthly Revenue</h4>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={revenue.monthly}>
@@ -547,7 +560,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Booking Status Distribution */}
         {statusData.length > 0 && (
-          <div className="bg-white border rounded-xl p-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-6">
             <h4 className="font-semibold text-gray-900 mb-4">Booking Status Distribution</h4>
             <ResponsiveContainer width="100%" height={250}>
               <RechartsPieChart>
@@ -574,7 +587,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
 
         {/* Service Popularity */}
         {bookingTrends.servicePopularity.length > 0 && (
-          <div className="bg-white border rounded-xl p-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-6">
             <h4 className="font-semibold text-gray-900 mb-4">Top Services</h4>
             <div className="space-y-3">
               {bookingTrends.servicePopularity.slice(0, 5).map((service, index) => (
@@ -600,7 +613,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* By City */}
         {demographics.byCity.length > 0 && (
-          <div className="bg-white border rounded-xl p-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-6">
             <h4 className="font-semibold text-gray-900 mb-4">Customers by City</h4>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={demographics.byCity} layout="vertical">
@@ -616,7 +629,7 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
 
         {/* Peak Hours */}
         {demographics.peakHours.length > 0 && (
-          <div className="bg-white border rounded-xl p-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-6">
             <h4 className="font-semibold text-gray-900 mb-4">Peak Booking Hours</h4>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={demographics.peakHours}>
