@@ -55,6 +55,7 @@ export const userAPI = {
 // Provider APIs
 export const providerAPI = {
   getAll: (params) => api.get('/providers', { params }),
+  getSuggestions: (q) => api.get('/providers/suggestions', { params: { q } }),
   getById: (id) => api.get(`/providers/${id}`),
   register: (data) => api.post('/providers/register', data),
   updateProfile: (data) => api.put('/providers/profile', data),

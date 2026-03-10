@@ -1,5 +1,5 @@
 const express = require('express');
-const { body, query } = require('express-validator');
+const { body, query: queryValidator } = require('express-validator');
 const router = express.Router();
 const ServiceProvider = require('../models/ServiceProvider');
 const User = require('../models/User');
@@ -7,6 +7,61 @@ const Review = require('../models/Review');
 const Booking = require('../models/Booking');
 const { protect, authorize } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+
+// Helper to escape special regex characters (prevents ReDoS)
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// @route   GET /api/providers/suggestions
+// @desc    Get search suggestions (autocomplete)
+// @access  Public
+router.get('/suggestions', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) {
+      return res.json({ success: true, data: [] });
+    }
+
+    const escaped = escapeRegex(q);
+    const regex = new RegExp(escaped, 'i');
+
+    // Get matching business names
+    const providers = await ServiceProvider.find({
+      isActive: true,
+      verificationStatus: 'verified',
+      $or: [
+        { businessName: regex },
+        { 'services.name': regex }
+      ]
+    })
+      .select('businessName services.name location.city')
+      .limit(8)
+      .lean();
+
+    const suggestions = [];
+    const seen = new Set();
+
+    providers.forEach(p => {
+      // Add matching business names
+      if (regex.test(p.businessName) && !seen.has(p.businessName.toLowerCase())) {
+        seen.add(p.businessName.toLowerCase());
+        suggestions.push({ type: 'provider', text: p.businessName, city: p.location?.city });
+      }
+      // Add matching service names
+      p.services?.forEach(s => {
+        if (regex.test(s.name) && !seen.has(s.name.toLowerCase())) {
+          seen.add(s.name.toLowerCase());
+          suggestions.push({ type: 'service', text: s.name });
+        }
+      });
+    });
+
+    res.json({ success: true, data: suggestions.slice(0, 8) });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // @route   GET /api/providers
 // @desc    Get all providers with filters
@@ -23,39 +78,60 @@ router.get('/', async (req, res) => {
       sortBy = 'rating',
       page = 1,
       limit = 10,
-      search
+      search,
+      minPrice,
+      maxPrice,
+      available
     } = req.query;
 
-    let query = { isActive: true, verificationStatus: 'verified' };
+    let filter = { isActive: true, verificationStatus: 'verified' };
 
     // Category filter
     if (category) {
-      query['services.category'] = category;
+      filter['services.category'] = category;
     }
 
     // City filter
     if (city) {
-      query['location.city'] = new RegExp(city, 'i');
+      filter['location.city'] = new RegExp(escapeRegex(city), 'i');
     }
 
-    // Search filter
+    // Search filter (sanitized regex)
     if (search) {
-      query.$or = [
-        { businessName: new RegExp(search, 'i') },
-        { description: new RegExp(search, 'i') },
-        { 'services.name': new RegExp(search, 'i') }
+      const escaped = escapeRegex(search);
+      filter.$or = [
+        { businessName: new RegExp(escaped, 'i') },
+        { description: new RegExp(escaped, 'i') },
+        { 'services.name': new RegExp(escaped, 'i') },
+        { 'services.description': new RegExp(escaped, 'i') }
       ];
     }
 
     // Rating filter
     if (minRating) {
-      query.averageRating = { $gte: parseFloat(minRating) };
+      filter.averageRating = { $gte: parseFloat(minRating) };
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      const priceCondition = {};
+      if (minPrice) priceCondition.$gte = parseFloat(minPrice);
+      if (maxPrice) priceCondition.$lte = parseFloat(maxPrice);
+      filter['services.price'] = priceCondition;
+    }
+
+    // Availability filter
+    if (available === 'true') {
+      filter['availability.isAvailable'] = true;
     }
 
     // Geospatial query
     let providers;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
     if (lat && lng) {
-      providers = await ServiceProvider.aggregate([
+      const pipeline = [
         {
           $geoNear: {
             near: {
@@ -63,56 +139,89 @@ router.get('/', async (req, res) => {
               coordinates: [parseFloat(lng), parseFloat(lat)]
             },
             distanceField: 'distance',
-            maxDistance: parseFloat(radius) * 1000, // Convert km to meters
+            maxDistance: parseFloat(radius) * 1000,
             spherical: true,
-            query: query
+            query: filter
           }
-        },
-        { $skip: (parseInt(page) - 1) * parseInt(limit) },
-        { $limit: parseInt(limit) }
+        }
+      ];
+
+      // Get total count for geo queries
+      const countResult = await ServiceProvider.aggregate([...pipeline, { $count: 'total' }]);
+      const total = countResult.length > 0 ? countResult[0].total : 0;
+
+      // Add sorting for geo queries
+      let geoSort = { distance: 1 };
+      if (sortBy === 'rating') geoSort = { averageRating: -1, distance: 1 };
+      else if (sortBy === 'reviews') geoSort = { totalReviews: -1, distance: 1 };
+      else if (sortBy === 'price_low') geoSort = { 'services.0.price': 1, distance: 1 };
+      else if (sortBy === 'price_high') geoSort = { 'services.0.price': -1, distance: 1 };
+
+      pipeline.push({ $sort: geoSort });
+      pipeline.push({ $skip: (pageNum - 1) * limitNum });
+      pipeline.push({ $limit: limitNum });
+
+      providers = await ServiceProvider.aggregate(pipeline);
+
+      await ServiceProvider.populate(providers, [
+        { path: 'user', select: 'name email phone avatar' },
+        { path: 'services.category', select: 'name slug icon' }
       ]);
 
-      // Populate user data
-      await ServiceProvider.populate(providers, {
-        path: 'user',
-        select: 'name email phone avatar'
+      return res.json({
+        success: true,
+        data: {
+          providers,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total,
+            pages: Math.ceil(total / limitNum)
+          }
+        }
       });
-    } else {
-      // Sorting
-      let sortOption = {};
-      switch (sortBy) {
-        case 'rating':
-          sortOption = { averageRating: -1 };
-          break;
-        case 'reviews':
-          sortOption = { totalReviews: -1 };
-          break;
-        case 'newest':
-          sortOption = { createdAt: -1 };
-          break;
-        default:
-          sortOption = { averageRating: -1 };
-      }
-
-      providers = await ServiceProvider.find(query)
-        .populate('user', 'name email phone avatar')
-        .populate('services.category', 'name slug icon')
-        .sort(sortOption)
-        .skip((parseInt(page) - 1) * parseInt(limit))
-        .limit(parseInt(limit));
     }
 
-    const total = await ServiceProvider.countDocuments(query);
+    // Sorting
+    let sortOption = {};
+    switch (sortBy) {
+      case 'rating':
+        sortOption = { averageRating: -1 };
+        break;
+      case 'reviews':
+        sortOption = { totalReviews: -1 };
+        break;
+      case 'newest':
+        sortOption = { createdAt: -1 };
+        break;
+      case 'price_low':
+        sortOption = { 'services.0.price': 1 };
+        break;
+      case 'price_high':
+        sortOption = { 'services.0.price': -1 };
+        break;
+      default:
+        sortOption = { averageRating: -1 };
+    }
+
+    providers = await ServiceProvider.find(filter)
+      .populate('user', 'name email phone avatar')
+      .populate('services.category', 'name slug icon')
+      .sort(sortOption)
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    const total = await ServiceProvider.countDocuments(filter);
 
     res.json({
       success: true,
       data: {
         providers,
         pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
+          page: pageNum,
+          limit: limitNum,
           total,
-          pages: Math.ceil(total / parseInt(limit))
+          pages: Math.ceil(total / limitNum)
         }
       }
     });
