@@ -180,8 +180,13 @@ const Home = () => {
                   className="group bg-white rounded-2xl border border-neutral-200 p-6 text-center hover:shadow-card hover:-translate-y-[2px] transition-all duration-300 ease-out shadow-subtle"
                   style={{ animationDelay: `${idx * 60}ms` }}
                 >
-                  <div className="w-12 h-12 bg-neutral-100 rounded-xl flex items-center justify-center mx-auto mb-5 group-hover:bg-neutral-950 transition-colors duration-300">
-                    <Icon className="h-5 w-5 text-neutral-600 group-hover:text-white transition-colors" />
+                  <div className="mx-auto mb-6 w-full max-w-[220px] aspect-square overflow-hidden rounded-2xl shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                    <img 
+                      src={`/images/service-${category.name.toLowerCase().replace(/\s+/g, '-')}.png`} 
+                      alt={`Professional Indian ${category.name}`}
+                      loading="lazy"
+                      className="w-full h-full object-cover transform group-hover:scale-[1.05] transition-transform duration-300"
+                    />
                   </div>
                   <h3 className="font-semibold text-neutral-950 mb-1 tracking-tight">{category.name}</h3>
                   <p className="text-sm text-neutral-500 line-clamp-2">{category.description}</p>

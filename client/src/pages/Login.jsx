@@ -160,7 +160,7 @@ const Login = () => {
             </p>
             <p className="flex items-center gap-2">
               <span className="px-2 py-1 bg-neutral-100 text-neutral-950 rounded-lg font-bold text-[10px] uppercase border border-neutral-200">Provider</span>
-              rajesh.electric@example.com / provider123
+              provider0@example.com / provider123
             </p>
           </div>
         </div>

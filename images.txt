@@ -1,0 +1,115 @@
+# Prompt: Replace Service Icons with Realistic Indian AI Images
+
+Replace all existing service icons/symbols in the **"Our Services"** section with **realistic AI-generated photographs** that have a clear **Indian context**.
+
+## Overall Style
+
+The images should feel like they belong to a modern Indian home services marketplace (similar to Urban Company) and immediately build trust.
+
+### Image Requirements
+
+* Remove all icons completely.
+* Generate **photorealistic AI images**, not illustrations, vectors, clipart, cartoons, or 3D renders.
+* Every image should feature **Indian service professionals**.
+* Professionals should have an authentic Indian appearance with natural Indian skin tones and facial features.
+* Clothing should resemble what local Indian technicians actually wear—clean uniforms, polo shirts, work shirts, aprons, safety gloves, and tool belts where appropriate. Avoid overly corporate or Western-looking uniforms.
+* Use modern Indian homes and apartments as the background.
+* Images should be **slightly close-up (waist-up or upper-body framing)** so the worker and their tools are clearly visible while still showing enough of the work environment. Avoid extreme close-ups of faces or wide shots where the worker appears tiny.
+* Subject should occupy roughly **60–70% of the frame**.
+* Natural lighting.
+* Warm and welcoming color tones.
+* Consistent photography style across all categories.
+* Premium, trustworthy, and professional look.
+
+---
+
+## Individual Image Prompts
+
+### Electrician
+
+A realistic Indian electrician wearing a blue work uniform and safety gloves while repairing a modern electrical switchboard inside a contemporary Indian apartment. Tool belt and electrical tester visible. Slightly close-up upper-body shot. Warm indoor lighting. Photorealistic.
+
+---
+
+### Plumber
+
+A professional Indian plumber fixing a kitchen sink with a wrench in a modern Indian home. Water pipes and plumbing tools visible. Wearing a clean work uniform and gloves. Waist-up framing. Highly realistic.
+
+---
+
+### Carpenter
+
+An experienced Indian carpenter sanding and assembling wooden furniture in a clean woodworking space inside a modern Indian home. Measuring tape, drill, and wooden panels visible. Upper-body composition. Photorealistic.
+
+---
+
+### AC Technician
+
+An Indian AC technician servicing a wall-mounted split air conditioner in a modern apartment. Wearing a professional work uniform with service tools visible. Slightly close-up framing showing both technician and AC unit. Ultra realistic.
+
+---
+
+### Painter
+
+An Indian house painter using a paint roller to paint an interior wall of a modern apartment. Paint tray and masking tape visible. Waist-up composition. Bright natural lighting. Highly realistic.
+
+---
+
+### Cleaner
+
+A professional Indian cleaner vacuuming or wiping surfaces in a clean modern living room. Wearing gloves and a neat cleaning uniform. Cleaning supplies visible in the background. Upper-body framing. Realistic photography.
+
+---
+
+### Appliance Repair
+
+An Indian appliance repair technician repairing a front-loading washing machine using professional tools. Modern laundry area inside an Indian apartment. Slightly close-up composition showing both technician and appliance. Photorealistic.
+
+---
+
+### Pest Control
+
+An Indian pest control expert wearing protective equipment while treating a modern apartment using professional spraying equipment. Clean environment with safety gear visible. Waist-up framing. Highly realistic.
+
+---
+
+## UI Requirements
+
+* Replace every icon with the generated image.
+* Image dimensions:
+
+  * Desktop: **80×80 px**
+  * Tablet: **64×64 px**
+  * Mobile: **56×56 px**
+* Square aspect ratio (1:1).
+* `object-fit: cover`.
+* Border radius: **14–16px**.
+* Soft shadow for depth.
+* Lazy load images.
+* Smooth hover animation:
+
+  * Scale image to **1.05**
+  * Slight card lift
+  * Enhanced shadow
+* Preserve the existing layout, spacing, responsiveness, and animations.
+
+---
+
+## Accessibility
+
+Use descriptive alt text for each image, such as:
+
+* Professional Indian Electrician
+* Professional Indian Plumber
+* Professional Indian Carpenter
+* Professional Indian AC Technician
+* Professional Indian Painter
+* Professional Indian Cleaner
+* Professional Indian Appliance Repair Technician
+* Professional Indian Pest Control Expert
+
+---
+
+## Goal
+
+The "Our Services" section should instantly communicate professionalism, trust, and locality. Every image should feel like a real service professional from an Indian city visiting a customer's home. The overall experience should look premium, modern, and authentic, with realistic Indian workers shown in slightly close-up compositions that clearly showcase both the professional and the service they provide.
