@@ -4,19 +4,16 @@ import { MapPin, Mail, Phone, ArrowUpRight, Heart } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-950 text-gray-400">
+    <footer className="bg-white border-t border-neutral-200 text-neutral-600">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* Brand */}
           <div className="md:col-span-5">
-            <div className="flex items-center space-x-2 mb-5">
-              <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                <MapPin className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">Localify</span>
+            <div className="flex items-center space-x-2.5 mb-6">
+              <img src="/images/logo.png" alt="Localify Logo" className="h-24 w-auto" />
             </div>
-            <p className="text-gray-500 mb-6 max-w-sm leading-relaxed">
+            <p className="text-neutral-500 mb-6 max-w-sm leading-relaxed text-sm">
               Find and book trusted local service providers for all your home service needs. 
               We connect you with verified professionals in your area.
             </p>
@@ -32,9 +29,9 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-xl bg-gray-800/60 flex items-center justify-center text-gray-500 hover:bg-primary-600 hover:text-white transition-all duration-300"
+                  className="w-9 h-9 rounded-lg border border-neutral-200 bg-neutral-50 flex items-center justify-center text-neutral-500 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-300"
                 >
-                  <svg className="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d={social.path} />
                   </svg>
                 </a>
@@ -44,8 +41,8 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="md:col-span-3">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">Quick Links</h3>
-            <ul className="space-y-3">
+            <h3 className="text-[13px] font-bold text-neutral-950 uppercase tracking-wider mb-6">Quick Links</h3>
+            <ul className="space-y-3.5">
               {[
                 { to: '/search', label: 'Find Services' },
                 { to: '/register?role=provider', label: 'Become a Provider' },
@@ -55,10 +52,10 @@ const Footer = () => {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="group flex items-center gap-1 text-gray-500 hover:text-white transition-colors duration-200"
+                    className="group flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-950 transition-colors duration-200"
                   >
                     {link.label}
-                    <ArrowUpRight className="h-3.5 w-3.5 opacity-0 -translate-y-0.5 translate-x-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200" />
+                    <ArrowUpRight className="h-3 w-3 opacity-0 -translate-y-0.5 translate-x-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200" />
                   </Link>
                 </li>
               ))}
@@ -67,25 +64,25 @@ const Footer = () => {
 
           {/* Contact */}
           <div className="md:col-span-4">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">Get in Touch</h3>
+            <h3 className="text-[13px] font-bold text-neutral-950 uppercase tracking-wider mb-6">Get in Touch</h3>
             <ul className="space-y-4">
               <li className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gray-800/60 flex items-center justify-center shrink-0">
-                  <Mail className="h-4 w-4 text-primary-400" />
+                <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center shrink-0">
+                  <Mail className="h-3.5 w-3.5 text-neutral-700" />
                 </div>
-                <span className="text-gray-500">support@localify.com</span>
+                <span className="text-sm font-medium text-neutral-600">support@localify.com</span>
               </li>
               <li className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gray-800/60 flex items-center justify-center shrink-0">
-                  <Phone className="h-4 w-4 text-primary-400" />
+                <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center shrink-0">
+                  <Phone className="h-3.5 w-3.5 text-neutral-700" />
                 </div>
-                <span className="text-gray-500">+91 98765 43210</span>
+                <span className="text-sm font-medium text-neutral-600">+91 98765 43210</span>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gray-800/60 flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin className="h-4 w-4 text-primary-400" />
+                <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPin className="h-3.5 w-3.5 text-neutral-700" />
                 </div>
-                <span className="text-gray-500">123 Service Street<br />Mumbai, MH 400101</span>
+                <span className="text-sm font-medium text-neutral-600 leading-relaxed">123 Service Street<br />Mumbai, MH 400101</span>
               </li>
             </ul>
           </div>
@@ -93,14 +90,14 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800/70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="border-t border-neutral-200">
+        <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-sm text-gray-600">
+            <p className="text-[13px] font-medium text-neutral-500">
               &copy; {new Date().getFullYear()} Localify. All rights reserved.
             </p>
-            <p className="text-sm text-gray-600 flex items-center gap-1">
-              Made with <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" /> in India
+            <p className="text-[13px] font-medium text-neutral-500 flex items-center gap-1.5">
+              Made with <Heart className="h-3.5 w-3.5 text-neutral-950 fill-neutral-950" /> in India
             </p>
           </div>
         </div>

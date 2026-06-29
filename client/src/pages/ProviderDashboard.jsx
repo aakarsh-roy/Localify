@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   Calendar, 
   Clock, 
@@ -36,6 +37,10 @@ import { providerAPI, bookingAPI, reviewAPI, analyticsAPI } from '../services/ap
 import StarRating from '../components/ui/StarRating';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
+import Button from '../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import Avatar from '../components/ui/Avatar';
+import Badge from '../components/ui/Badge';
 
 const ProviderDashboard = () => {
   const { user, provider, checkAuth } = useAuth();
@@ -62,12 +67,14 @@ const ProviderDashboard = () => {
       return;
     }
     fetchDashboardData();
-  }, [provider]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, navigate]);
 
   useEffect(() => {
     if (activeTab === 'analytics') {
       fetchAnalytics();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, analyticsPeriod]);
 
   const fetchAnalytics = async () => {
@@ -138,131 +145,156 @@ const ProviderDashboard = () => {
     }
   };
 
-  const statusColors = {
-    'pending': 'bg-amber-50 text-amber-700 ring-1 ring-amber-200/60',
-    'accepted': 'bg-blue-50 text-blue-700 ring-1 ring-blue-200/60',
-    'in-progress': 'bg-violet-50 text-violet-700 ring-1 ring-violet-200/60',
-    'completed': 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60',
-    'cancelled': 'bg-gray-50 text-gray-600 ring-1 ring-gray-200/60',
-    'rejected': 'bg-red-50 text-red-700 ring-1 ring-red-200/60'
+  const statusConfig = {
+    'pending': 'warning',
+    'accepted': 'secondary',
+    'in-progress': 'default',
+    'completed': 'success',
+    'cancelled': 'secondary',
+    'rejected': 'destructive'
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">{user?.name?.charAt(0)}</span>
+    <div className="min-h-screen bg-neutral-50/50 py-10">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 animate-fade-in-up">
+        {/* Header / Banner */}
+        <div className="mb-10 bg-white border border-neutral-200 rounded-3xl p-8 sm:p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+          <div className="relative z-10 flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
+              <div className="flex items-center gap-4">
+                <Avatar 
+                  src={user?.avatarUrl} 
+                  alt={user?.name} 
+                  fallback={user?.name?.charAt(0)}
+                  size="lg"
+                />
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-950 tracking-tight">
+                    Welcome, {user?.name?.split(' ')[0]}!
+                  </h1>
+                  <p className="text-neutral-500 font-medium mt-1">{provider?.businessName}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {provider?.verificationStatus === 'pending' && (
+                  <Badge variant="warning">
+                    Pending Verification
+                  </Badge>
+                )}
+                <Button
+                  variant={availability ? 'success' : 'outline'}
+                  onClick={toggleAvailability}
+                  className={availability ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-neutral-950 border-neutral-200'}
+                >
+                  {availability ? 'Available' : 'Unavailable'}
+                </Button>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Welcome, {user?.name?.split(' ')[0]}!
-              </h1>
-              <p className="text-gray-500">{provider?.businessName}</p>
-            </div>
+            <p className="text-neutral-500 text-lg font-medium max-w-lg">Manage your services, respond to bookings, and track your business performance from your professional dashboard.</p>
           </div>
-          <div className="flex items-center gap-3">
-            {provider?.verificationStatus === 'pending' && (
-              <span className="px-3 py-1.5 bg-amber-50 text-amber-700 ring-1 ring-amber-200/60 rounded-xl text-sm font-semibold">
-                Pending Verification
-              </span>
-            )}
-            <button
-              onClick={toggleAvailability}
-              className={`px-4 py-2 rounded-xl font-semibold ring-1 transition-colors ${
-                availability
-                  ? 'bg-emerald-50 text-emerald-700 ring-emerald-200/60 hover:bg-emerald-100'
-                  : 'bg-gray-50 text-gray-600 ring-gray-200/60 hover:bg-gray-100'
-              }`}
-            >
-              {availability ? 'Available' : 'Unavailable'}
-            </button>
+          
+          <div className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
+            <div className="absolute inset-0 bg-gradient-to-tr from-neutral-200 to-transparent rounded-full blur-3xl opacity-50 -z-10" />
+            <motion.img 
+              src="/images/provider-banner.png" 
+              alt="Provider overview" 
+              className="w-full h-auto drop-shadow-xl"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            />
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-primary-600" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-neutral-950" />
+                </div>
+                <span className="text-3xl font-black text-neutral-950 tracking-tight">{stats.totalBookings}</span>
               </div>
-              <span className="text-3xl font-bold text-gray-900">{stats.totalBookings}</span>
-            </div>
-            <p className="text-sm font-medium text-gray-500">Total Bookings</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-amber-600" />
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Bookings</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center">
+                  <AlertCircle className="h-5 w-5 text-neutral-950" />
+                </div>
+                <span className="text-3xl font-black text-neutral-950 tracking-tight">{stats.pending}</span>
               </div>
-              <span className="text-3xl font-bold text-gray-900">{stats.pending}</span>
-            </div>
-            <p className="text-sm font-medium text-gray-500">Pending Requests</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-emerald-600" />
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Pending Requests</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-neutral-950" />
+                </div>
+                <span className="text-3xl font-black text-neutral-950 tracking-tight">{stats.completed}</span>
               </div>
-              <span className="text-3xl font-bold text-gray-900">{stats.completed}</span>
-            </div>
-            <p className="text-sm font-medium text-gray-500">Completed Jobs</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl flex items-center justify-center">
-                <Star className="h-5 w-5 text-amber-500" />
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Completed Jobs</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center">
+                  <Star className="h-5 w-5 text-neutral-950" />
+                </div>
+                <div className="text-right">
+                  <span className="text-3xl font-black text-neutral-950 tracking-tight">{stats.avgRating.toFixed(1)}</span>
+                  <p className="text-xs text-neutral-400 font-medium">({stats.totalReviews} reviews)</p>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="text-3xl font-bold text-gray-900">{stats.avgRating.toFixed(1)}</span>
-                <p className="text-xs text-gray-500">({stats.totalReviews} reviews)</p>
-              </div>
-            </div>
-            <p className="text-sm font-medium text-gray-500">Average Rating</p>
-          </div>
+              <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Average Rating</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-card border border-gray-100">
-          <div className="border-b border-gray-100">
-            <nav className="flex">
+        <Card className="overflow-hidden bg-white shadow-subtle border border-neutral-200">
+          <div className="border-b border-neutral-200 bg-white">
+            <nav className="flex overflow-x-auto hide-scrollbar">
               <button
                 onClick={() => setActiveTab('bookings')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 ${
+                className={`px-8 py-5 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
                   activeTab === 'bookings'
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-neutral-950 text-neutral-950 bg-white'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'
                 }`}
               >
                 Bookings
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 ${
+                className={`px-8 py-5 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
                   activeTab === 'reviews'
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-neutral-950 text-neutral-950 bg-white'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'
                 }`}
               >
                 Reviews
               </button>
               <button
                 onClick={() => setActiveTab('analytics')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 flex items-center gap-2 ${
+                className={`px-8 py-5 text-sm font-bold border-b-2 flex items-center gap-2 transition-all whitespace-nowrap ${
                   activeTab === 'analytics'
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-neutral-950 text-neutral-950 bg-white'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
@@ -271,78 +303,84 @@ const ProviderDashboard = () => {
             </nav>
           </div>
 
-          <div className="p-6">
+          <CardContent className="p-6">
             {activeTab === 'bookings' && (
               <div className="space-y-4">
                 {bookings.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-600">No bookings yet</p>
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-200">
+                      <Calendar className="h-8 w-8 text-neutral-400" />
+                    </div>
+                    <p className="text-neutral-500 font-medium">No bookings yet</p>
                   </div>
                 ) : (
                   bookings.map((booking) => (
-                    <div key={booking._id} className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-shadow">
-                      <div className="flex items-start justify-between mb-3">
+                    <div key={booking._id} className="border border-neutral-200 rounded-2xl p-5 hover:border-neutral-950 hover:shadow-subtle transition-all bg-white">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3">
                         <div>
-                          <h3 className="font-medium text-gray-900">{booking.service?.name}</h3>
-                          <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                          <h3 className="font-bold text-neutral-950 text-lg mb-1 tracking-tight">{booking.service?.name}</h3>
+                          <div className="flex items-center gap-2 text-sm text-neutral-500 font-medium">
                             <User className="h-4 w-4" />
                             <span>{booking.user?.name}</span>
                           </div>
                         </div>
-                        <span className={`px-3 py-1 rounded-xl text-xs font-semibold capitalize ${statusColors[booking.status]}`}>
+                        <Badge variant={statusConfig[booking.status] || 'secondary'} className="capitalize self-start">
                           {booking.status}
-                        </span>
+                        </Badge>
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-neutral-600 font-medium mb-5">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4.5 w-4.5 text-neutral-400" />
                           <span>{new Date(booking.scheduledDate).toLocaleDateString()}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4.5 w-4.5 text-neutral-400" />
                           <span>{booking.scheduledTime}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <IndianRupee className="h-4 w-4" />
-                          <span>₹{booking.service?.price}</span>
+                        <div className="flex items-center gap-2 text-neutral-950 font-extrabold">
+                          <IndianRupee className="h-4.5 w-4.5 text-neutral-950" />
+                          <span>{booking.service?.price}</span>
                         </div>
                       </div>
 
                       {booking.status === 'pending' && (
-                        <div className="flex gap-2">
-                          <button
+                        <div className="flex gap-3 pt-4 border-t border-neutral-100">
+                          <Button
+                            variant="primary"
                             onClick={() => handleBookingAction(booking._id, 'accepted')}
-                            className="btn-primary text-sm"
                           >
                             Accept
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            variant="outline"
                             onClick={() => handleBookingAction(booking._id, 'rejected', 'Booking declined')}
-                            className="btn-secondary text-sm"
                           >
                             Decline
-                          </button>
+                          </Button>
                         </div>
                       )}
 
                       {booking.status === 'accepted' && (
-                        <button
-                          onClick={() => handleBookingAction(booking._id, 'in-progress')}
-                          className="btn-primary text-sm"
-                        >
-                          Start Job
-                        </button>
+                        <div className="pt-4 border-t border-neutral-100">
+                          <Button
+                            variant="primary"
+                            onClick={() => handleBookingAction(booking._id, 'in-progress')}
+                          >
+                            Start Job
+                          </Button>
+                        </div>
                       )}
 
                       {booking.status === 'in-progress' && (
-                        <button
-                          onClick={() => handleBookingAction(booking._id, 'completed')}
-                          className="btn-primary text-sm"
-                        >
-                          Mark Complete
-                        </button>
+                        <div className="pt-4 border-t border-neutral-100">
+                          <Button
+                            variant="primary"
+                            onClick={() => handleBookingAction(booking._id, 'completed')}
+                          >
+                            Mark Complete
+                          </Button>
+                        </div>
                       )}
                     </div>
                   ))
@@ -353,21 +391,26 @@ const ProviderDashboard = () => {
             {activeTab === 'reviews' && (
               <div className="space-y-4">
                 {reviews.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Star className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-600">No reviews yet</p>
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-200">
+                      <Star className="h-8 w-8 text-neutral-400" />
+                    </div>
+                    <p className="text-neutral-500 font-medium">No reviews yet</p>
                   </div>
                 ) : (
                   reviews.map((review) => (
-                    <div key={review._id} className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-shadow">
-                      <div className="flex items-start justify-between mb-2">
+                    <div key={review._id} className="border border-neutral-200 rounded-2xl p-5 hover:border-neutral-950 hover:shadow-subtle transition-all bg-white">
+                      <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center">
-                            <span className="text-primary-700 font-semibold text-sm">{review.user?.name?.charAt(0)}</span>
-                          </div>
+                          <Avatar 
+                            src={review.user?.avatarUrl} 
+                            alt={review.user?.name} 
+                            fallback={review.user?.name?.charAt(0)}
+                            size="md"
+                          />
                           <div>
-                            <p className="font-medium text-gray-900">{review.user?.name}</p>
-                            <p className="text-sm text-gray-500">
+                            <p className="font-bold text-neutral-950">{review.user?.name}</p>
+                            <p className="text-sm text-neutral-500 font-medium">
                               {new Date(review.createdAt).toLocaleDateString()}
                             </p>
                           </div>
@@ -375,12 +418,12 @@ const ProviderDashboard = () => {
                         <StarRating rating={review.stars} size="sm" showValue={false} />
                       </div>
 
-                      <p className="text-gray-600 mb-3">{review.comment}</p>
+                      <p className="text-neutral-600 font-medium leading-relaxed mb-4">{review.comment}</p>
 
                       {review.providerResponse ? (
-                        <div className="bg-gray-50/80 rounded-xl p-3">
-                          <p className="text-sm font-medium text-gray-700 mb-1">Your Response:</p>
-                          <p className="text-sm text-gray-600">{review.providerResponse.comment}</p>
+                        <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+                          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Your Response:</p>
+                          <p className="text-sm text-neutral-700 font-medium leading-relaxed">{review.providerResponse.comment}</p>
                         </div>
                       ) : (
                         <RespondForm reviewId={review._id} onSubmit={handleRespondToReview} />
@@ -399,15 +442,15 @@ const ProviderDashboard = () => {
                 onPeriodChange={setAnalyticsPeriod}
               />
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
 
 // Chart colors
-const COLORS = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+const COLORS = ['#09090b', '#27272a', '#3f3f46', '#52525b', '#71717a', '#a1a1aa'];
 
 // Analytics Content Component
 const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
@@ -422,8 +465,10 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
   if (!analytics) {
     return (
       <div className="text-center py-12">
-        <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-600">No analytics data available</p>
+        <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-200">
+          <BarChart3 className="h-8 w-8 text-neutral-400" />
+        </div>
+        <p className="text-neutral-500 font-medium">No analytics data available</p>
       </div>
     );
   }
@@ -438,15 +483,17 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       value: count
     }));
 
+  const baseInputClass = "px-4 py-2 rounded-xl border border-neutral-200 focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 bg-white text-neutral-950 outline-none transition-all shadow-sm";
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Period Selector */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Analytics Overview</h3>
+        <h3 className="text-xl font-bold text-neutral-950 tracking-tight">Analytics Overview</h3>
         <select
           value={period}
           onChange={(e) => onPeriodChange(e.target.value)}
-          className="input-field w-auto"
+          className={`${baseInputClass} w-auto font-bold text-sm`}
         >
           <option value="7">Last 7 days</option>
           <option value="30">Last 30 days</option>
@@ -456,156 +503,211 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-4 text-white">
-          <div className="flex items-center gap-2 mb-2">
-            <IndianRupee className="h-5 w-5" />
-            <span className="text-sm opacity-90">Period Revenue</span>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-neutral-950 rounded-2xl p-6 text-white shadow-elevated relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div className="p-2 bg-neutral-800 rounded-lg">
+              <IndianRupee className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Period Revenue</span>
           </div>
-          <p className="text-2xl font-bold">₹{summary.periodRevenue.toLocaleString()}</p>
-          <p className="text-xs opacity-75 mt-1">{summary.periodBookings} bookings</p>
+          <p className="text-3xl font-extrabold relative z-10 tracking-tight">₹{summary.periodRevenue.toLocaleString()}</p>
+          <p className="text-xs font-medium text-neutral-400 mt-2 relative z-10">{summary.periodBookings} bookings</p>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="h-5 w-5" />
-            <span className="text-sm opacity-90">Total Revenue</span>
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div className="p-2 bg-neutral-100 rounded-lg">
+              <TrendingUp className="h-5 w-5 text-neutral-950" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Total Revenue</span>
           </div>
-          <p className="text-2xl font-bold">₹{summary.totalRevenue.toLocaleString()}</p>
-          <p className="text-xs opacity-75 mt-1">All time</p>
+          <p className="text-3xl font-extrabold text-neutral-950 relative z-10 tracking-tight">₹{summary.totalRevenue.toLocaleString()}</p>
+          <p className="text-xs font-medium text-neutral-500 mt-2 relative z-10">All time</p>
         </div>
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="h-5 w-5" />
-            <span className="text-sm opacity-90">Unique Customers</span>
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div className="p-2 bg-neutral-100 rounded-lg">
+              <Users className="h-5 w-5 text-neutral-950" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Unique Customers</span>
           </div>
-          <p className="text-2xl font-bold">{summary.uniqueCustomers}</p>
-          <p className="text-xs opacity-75 mt-1">{summary.repeatRate}% repeat rate</p>
+          <p className="text-3xl font-extrabold text-neutral-950 relative z-10 tracking-tight">{summary.uniqueCustomers}</p>
+          <p className="text-xs font-medium text-neutral-500 mt-2 relative z-10">{summary.repeatRate}% repeat rate</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
-          <div className="flex items-center gap-2 mb-2">
-            <IndianRupee className="h-5 w-5" />
-            <span className="text-sm opacity-90">Avg Order Value</span>
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div className="p-2 bg-neutral-100 rounded-lg">
+              <IndianRupee className="h-5 w-5 text-neutral-950" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Avg Order Value</span>
           </div>
-          <p className="text-2xl font-bold">₹{summary.avgOrderValue.toLocaleString()}</p>
-          <p className="text-xs opacity-75 mt-1">Per booking</p>
+          <p className="text-3xl font-extrabold text-neutral-950 relative z-10 tracking-tight">₹{summary.avgOrderValue.toLocaleString()}</p>
+          <p className="text-xs font-medium text-neutral-500 mt-2 relative z-10">Per booking</p>
         </div>
       </div>
 
       {/* Revenue Chart */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6">
-        <h4 className="font-semibold text-gray-900 mb-4">Revenue Trend</h4>
-        {revenue.daily.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenue.daily}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="date" 
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-              />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value, name) => [
-                  name === 'revenue' ? `₹${value.toLocaleString()}` : value,
-                  name === 'revenue' ? 'Revenue' : 'Bookings'
-                ]}
-                labelFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { 
-                  weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' 
-                })}
-              />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#4F46E5" 
-                strokeWidth={2}
-                dot={{ fill: '#4F46E5', strokeWidth: 2 }}
-                name="Revenue"
-              />
-              <Line 
-                type="monotone" 
-                dataKey="bookings" 
-                stroke="#10B981" 
-                strokeWidth={2}
-                dot={{ fill: '#10B981', strokeWidth: 2 }}
-                name="Bookings"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="h-[300px] flex items-center justify-center text-gray-500">
-            No revenue data for this period
-          </div>
-        )}
-      </div>
+      <Card className="bg-white border border-neutral-200 shadow-sm">
+        <CardHeader className="pb-2 border-b border-neutral-100">
+          <CardTitle className="tracking-tight">Revenue Trend</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          {revenue.daily.length > 0 ? (
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={revenue.daily} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }}
+                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  axisLine={false}
+                  tickLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                  axisLine={false}
+                  tickLine={false}
+                  dx={-10}
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    name === 'revenue' ? `₹${value.toLocaleString()}` : value,
+                    name === 'revenue' ? 'Revenue' : 'Bookings'
+                  ]}
+                  labelFormatter={(value) => new Date(value).toLocaleDateString('en-IN', { 
+                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' 
+                  })}
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ fontWeight: 'bold' }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold' }} />
+                <Line 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#09090b" 
+                  strokeWidth={3}
+                  dot={{ fill: '#09090b', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 0 }}
+                  name="Revenue"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="bookings" 
+                  stroke="#71717a" 
+                  strokeWidth={3}
+                  dot={{ fill: '#71717a', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 0 }}
+                  name="Bookings"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-neutral-500 font-medium">
+              No revenue data for this period
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Monthly Revenue */}
       {revenue.monthly.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-2xl p-6">
-          <h4 className="font-semibold text-gray-900 mb-4">Monthly Revenue</h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenue.monthly}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
-              />
-              <Bar dataKey="revenue" fill="#4F46E5" radius={[4, 4, 0, 0]} name="Revenue" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Card className="bg-white border border-neutral-200 shadow-sm">
+          <CardHeader className="pb-2 border-b border-neutral-100">
+            <CardTitle className="tracking-tight">Monthly Revenue</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={revenue.monthly} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                  axisLine={false}
+                  tickLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                  axisLine={false}
+                  tickLine={false}
+                  dx={-10}
+                />
+                <Tooltip 
+                  formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ fontWeight: 'bold' }}
+                  cursor={{ fill: '#f4f4f5' }}
+                />
+                <Bar dataKey="revenue" fill="#09090b" radius={[6, 6, 0, 0]} name="Revenue" maxBarSize={60} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Booking Status Distribution */}
         {statusData.length > 0 && (
-          <div className="bg-white border border-gray-100 rounded-2xl p-6">
-            <h4 className="font-semibold text-gray-900 mb-4">Booking Status Distribution</h4>
-            <ResponsiveContainer width="100%" height={250}>
-              <RechartsPieChart>
-                <Pie
-                  data={statusData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {statusData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </RechartsPieChart>
-            </ResponsiveContainer>
-          </div>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardHeader className="pb-2 border-b border-neutral-100">
+              <CardTitle className="tracking-tight">Booking Status Distribution</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ResponsiveContainer width="100%" height={280}>
+                <RechartsPieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={90}
+                    innerRadius={50}
+                    fill="#09090b"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    stroke="none"
+                  >
+                    {statusData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ fontWeight: 'bold' }}
+                  />
+                  <Legend iconType="circle" wrapperStyle={{ fontWeight: 'bold' }} />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         )}
 
         {/* Service Popularity */}
         {bookingTrends.servicePopularity.length > 0 && (
-          <div className="bg-white border border-gray-100 rounded-2xl p-6">
-            <h4 className="font-semibold text-gray-900 mb-4">Top Services</h4>
-            <div className="space-y-3">
-              {bookingTrends.servicePopularity.slice(0, 5).map((service, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-medium">
-                      {index + 1}
-                    </span>
-                    <span className="text-gray-900 font-medium">{service.service}</span>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardHeader className="pb-2 border-b border-neutral-100">
+              <CardTitle className="tracking-tight">Top Services</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {bookingTrends.servicePopularity.slice(0, 5).map((service, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 rounded-xl bg-neutral-50 border border-neutral-200">
+                    <div className="flex items-center gap-4">
+                      <span className="w-8 h-8 bg-white shadow-sm text-neutral-950 rounded-full flex items-center justify-center text-sm font-bold border border-neutral-200">
+                        {index + 1}
+                      </span>
+                      <span className="text-neutral-950 font-bold">{service.service}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-neutral-950 font-extrabold block">₹{service.revenue.toLocaleString()}</span>
+                      <span className="text-neutral-500 font-bold text-[10px] uppercase tracking-wider">{service.bookings} bookings</span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-gray-900 font-semibold">₹{service.revenue.toLocaleString()}</span>
-                    <span className="text-gray-500 text-sm ml-2">({service.bookings} bookings)</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
 
@@ -613,34 +715,73 @@ const AnalyticsContent = ({ analytics, loading, period, onPeriodChange }) => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* By City */}
         {demographics.byCity.length > 0 && (
-          <div className="bg-white border border-gray-100 rounded-2xl p-6">
-            <h4 className="font-semibold text-gray-900 mb-4">Customers by City</h4>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={demographics.byCity} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis type="number" tick={{ fontSize: 12 }} />
-                <YAxis dataKey="city" type="category" width={100} tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Bar dataKey="customers" fill="#10B981" radius={[0, 4, 4, 0]} name="Customers" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardHeader className="pb-2 border-b border-neutral-100">
+              <CardTitle className="tracking-tight">Customers by City</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={demographics.byCity} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" horizontal={false} />
+                  <XAxis 
+                    type="number" 
+                    tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    dataKey="city" 
+                    type="category" 
+                    width={100} 
+                    tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ fontWeight: 'bold' }}
+                    cursor={{ fill: '#f4f4f5' }}
+                  />
+                  <Bar dataKey="customers" fill="#09090b" radius={[0, 6, 6, 0]} name="Customers" maxBarSize={32} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         )}
 
         {/* Peak Hours */}
         {demographics.peakHours.length > 0 && (
-          <div className="bg-white border border-gray-100 rounded-2xl p-6">
-            <h4 className="font-semibold text-gray-900 mb-4">Peak Booking Hours</h4>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={demographics.peakHours}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Bar dataKey="bookings" fill="#F59E0B" radius={[4, 4, 0, 0]} name="Bookings" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardHeader className="pb-2 border-b border-neutral-100">
+              <CardTitle className="tracking-tight">Peak Booking Hours</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={demographics.peakHours} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
+                  <XAxis 
+                    dataKey="hour" 
+                    tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                    axisLine={false}
+                    tickLine={false}
+                    dy={10}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12, fill: '#737373', fontWeight: 600 }} 
+                    axisLine={false}
+                    tickLine={false}
+                    dx={-10}
+                  />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ fontWeight: 'bold' }}
+                    cursor={{ fill: '#f4f4f5' }}
+                  />
+                  <Bar dataKey="bookings" fill="#52525b" radius={[6, 6, 0, 0]} name="Bookings" maxBarSize={32} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
@@ -661,39 +802,50 @@ const RespondForm = ({ reviewId, onSubmit }) => {
     }
   };
 
+  const baseInputClass = "w-full px-4 py-3 rounded-xl border border-neutral-200 focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 bg-white text-neutral-950 outline-none transition-all placeholder:text-neutral-400 shadow-sm";
+
   if (!isOpen) {
     return (
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={() => setIsOpen(true)}
-        className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1"
       >
-        <MessageSquare className="h-4 w-4" />
+        <MessageSquare className="h-4 w-4 mr-1.5" />
         Respond to review
-      </button>
+      </Button>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-2">
+    <form onSubmit={handleSubmit} className="mt-4 bg-neutral-50 p-4 rounded-xl border border-neutral-200 shadow-sm">
       <textarea
         value={response}
         onChange={(e) => setResponse(e.target.value)}
-        className="input-field text-sm resize-none"
-        rows={2}
         placeholder="Write your response..."
-        maxLength={300}
+        rows={3}
+        className={`${baseInputClass} resize-none mb-3 font-medium`}
+        required
       />
-      <div className="flex gap-2 mt-2">
-        <button type="submit" className="btn-primary text-sm">
-          Submit
-        </button>
-        <button
+      <div className="flex justify-end gap-2">
+        <Button
           type="button"
-          onClick={() => setIsOpen(false)}
-          className="btn-secondary text-sm"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setIsOpen(false);
+            setResponse('');
+          }}
         >
           Cancel
-        </button>
+        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm"
+        >
+          Submit Response
+        </Button>
       </div>
     </form>
   );

@@ -130,7 +130,7 @@ router.put('/:id/status', protect, [
 ], validate, async (req, res) => {
   try {
     const { status, note } = req.body;
-
+       
     const booking = await Booking.findById(req.params.id);
     if (!booking) {
       return res.status(404).json({

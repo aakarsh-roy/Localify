@@ -8,50 +8,95 @@ const User = require('./models/User');
 const Category = require('./models/Category');
 const ServiceProvider = require('./models/ServiceProvider');
 
-// Mumbai area locations with coordinates
-const mumbaiLocations = [
-  { area: 'Andheri West', coordinates: [72.8362, 19.1364], zipCode: '400053' },
-  { area: 'Bandra West', coordinates: [72.8296, 19.0596], zipCode: '400050' },
-  { area: 'Juhu', coordinates: [72.8267, 19.1075], zipCode: '400049' },
-  { area: 'Powai', coordinates: [72.9052, 19.1176], zipCode: '400076' },
-  { area: 'Malad West', coordinates: [72.8403, 19.1872], zipCode: '400064' },
-  { area: 'Goregaon East', coordinates: [72.8630, 19.1663], zipCode: '400063' },
-  { area: 'Borivali West', coordinates: [72.8544, 19.2307], zipCode: '400092' },
-  { area: 'Kandivali East', coordinates: [72.8697, 19.2047], zipCode: '400101' },
-  { area: 'Thane West', coordinates: [72.9781, 19.2183], zipCode: '400601' },
-  { area: 'Vashi', coordinates: [72.9988, 19.0771], zipCode: '400703' },
-  { area: 'Dadar West', coordinates: [72.8426, 19.0178], zipCode: '400028' },
-  { area: 'Lower Parel', coordinates: [72.8296, 18.9986], zipCode: '400013' },
-  { area: 'Worli', coordinates: [72.8181, 19.0176], zipCode: '400018' },
-  { area: 'Colaba', coordinates: [72.8318, 18.9067], zipCode: '400005' },
-  { area: 'Churchgate', coordinates: [72.8271, 18.9322], zipCode: '400020' },
-  { area: 'Santacruz West', coordinates: [72.8410, 19.0830], zipCode: '400054' },
-  { area: 'Khar West', coordinates: [72.8333, 19.0726], zipCode: '400052' },
-  { area: 'Versova', coordinates: [72.8162, 19.1315], zipCode: '400061' },
-  { area: 'Chembur', coordinates: [72.8971, 19.0522], zipCode: '400071' },
-  { area: 'Ghatkopar West', coordinates: [72.9080, 19.0858], zipCode: '400086' }
+const cities = [
+  {
+    city: 'Mumbai', state: 'Maharashtra',
+    areas: [
+      { area: 'Andheri West', coordinates: [72.8362, 19.1364], zipCode: '400053' },
+      { area: 'Bandra West', coordinates: [72.8296, 19.0596], zipCode: '400050' },
+      { area: 'Juhu', coordinates: [72.8267, 19.1075], zipCode: '400049' },
+      { area: 'Powai', coordinates: [72.9052, 19.1176], zipCode: '400076' },
+      { area: 'Malad West', coordinates: [72.8403, 19.1872], zipCode: '400064' },
+      { area: 'Goregaon East', coordinates: [72.8630, 19.1663], zipCode: '400063' },
+      { area: 'Borivali West', coordinates: [72.8544, 19.2307], zipCode: '400092' },
+      { area: 'Kandivali East', coordinates: [72.8697, 19.2047], zipCode: '400101' },
+      { area: 'Thane West', coordinates: [72.9781, 19.2183], zipCode: '400601' },
+      { area: 'Dadar West', coordinates: [72.8426, 19.0178], zipCode: '400028' },
+      { area: 'Colaba', coordinates: [72.8318, 18.9067], zipCode: '400005' }
+    ]
+  },
+  {
+    city: 'Delhi', state: 'Delhi',
+    areas: [
+      { area: 'Connaught Place', coordinates: [77.2167, 28.6315], zipCode: '110001' },
+      { area: 'Saket', coordinates: [77.2065, 28.5246], zipCode: '110017' },
+      { area: 'Hauz Khas', coordinates: [77.1988, 28.5494], zipCode: '110016' },
+      { area: 'Vasant Kunj', coordinates: [77.1587, 28.5293], zipCode: '110070' },
+      { area: 'Dwarka', coordinates: [77.0500, 28.5790], zipCode: '110075' },
+      { area: 'Karol Bagh', coordinates: [77.1900, 28.6510], zipCode: '110005' },
+      { area: 'Lajpat Nagar', coordinates: [77.2420, 28.5670], zipCode: '110024' },
+      { area: 'Rohini', coordinates: [77.1130, 28.7360], zipCode: '110085' },
+      { area: 'Pitampura', coordinates: [77.1350, 28.6980], zipCode: '110034' },
+      { area: 'Janakpuri', coordinates: [77.0870, 28.6210], zipCode: '110058' }
+    ]
+  },
+  {
+    city: 'Bengaluru', state: 'Karnataka',
+    areas: [
+      { area: 'Koramangala', coordinates: [77.6271, 12.9279], zipCode: '560034' },
+      { area: 'Indiranagar', coordinates: [77.6411, 12.9718], zipCode: '560038' },
+      { area: 'Whitefield', coordinates: [77.7499, 12.9698], zipCode: '560066' },
+      { area: 'Jayanagar', coordinates: [77.5838, 12.9298], zipCode: '560011' },
+      { area: 'HSR Layout', coordinates: [77.6380, 12.9120], zipCode: '560102' },
+      { area: 'Marathahalli', coordinates: [77.7010, 12.9560], zipCode: '560037' },
+      { area: 'BTM Layout', coordinates: [77.6100, 12.9160], zipCode: '560076' },
+      { area: 'Electronic City', coordinates: [77.6690, 12.8450], zipCode: '560100' },
+      { area: 'Malleshwaram', coordinates: [77.5700, 13.0030], zipCode: '560003' }
+    ]
+  },
+  {
+    city: 'Chennai', state: 'Tamil Nadu',
+    areas: [
+      { area: 'T. Nagar', coordinates: [80.2319, 13.0418], zipCode: '600017' },
+      { area: 'Adyar', coordinates: [80.2573, 13.0012], zipCode: '600020' },
+      { area: 'Anna Nagar', coordinates: [80.2116, 13.0850], zipCode: '600040' },
+      { area: 'Velachery', coordinates: [80.2209, 12.9774], zipCode: '600042' }
+    ]
+  },
+  {
+    city: 'Hyderabad', state: 'Telangana',
+    areas: [
+      { area: 'Banjara Hills', coordinates: [78.4277, 17.4156], zipCode: '500034' },
+      { area: 'Jubilee Hills', coordinates: [78.4011, 17.4326], zipCode: '500033' },
+      { area: 'HITEC City', coordinates: [78.3814, 17.4435], zipCode: '500081' },
+      { area: 'Gachibowli', coordinates: [78.3587, 17.4401], zipCode: '500032' }
+    ]
+  }
 ];
+
+const firstNames = ['Amit', 'Rahul', 'Priya', 'Sneha', 'Rohan', 'Vikram', 'Anjali', 'Sanjay', 'Kavita', 'Suresh', 'Mahesh', 'Neha', 'Pooja', 'Rajesh', 'Sunita', 'Ramesh', 'Anil', 'Kiran', 'Vinod', 'Deepak'];
+const lastNames = ['Sharma', 'Patel', 'Kumar', 'Singh', 'Gupta', 'Reddy', 'Iyer', 'Menon', 'Das', 'Joshi', 'Rao', 'Desai', 'Nair', 'Kulkarni', 'Shetty', 'Chauhan', 'Pandey'];
+const businessWords = ['Services', 'Works', 'Solutions', 'Co.', 'Enterprises', 'Professionals', 'Experts'];
+
+const generateName = () => `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+const generateBusiness = (name, categoryName) => {
+  const words = [name.split(' ')[1], categoryName, businessWords[Math.floor(Math.random() * businessWords.length)]];
+  return words.join(' ');
+};
 
 const seedData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Clear existing data
     await User.deleteMany({});
     await Category.deleteMany({});
     await ServiceProvider.deleteMany({});
 
     console.log('Cleared existing data');
 
-    // Drop indexes to avoid slug issues
-    try {
-      await Category.collection.dropIndexes();
-    } catch (e) {
-      // Ignore if no indexes exist
-    }
+    try { await Category.collection.dropIndexes(); } catch (e) {}
 
-    // Create categories one by one to trigger pre-save hook for slug generation
     const categoryData = [
       { name: 'Electrician', description: 'Electrical repair and installation services', icon: 'zap', order: 1 },
       { name: 'Plumber', description: 'Plumbing repair and installation services', icon: 'droplet', order: 2 },
@@ -65,13 +110,10 @@ const seedData = async () => {
 
     const categories = [];
     for (const cat of categoryData) {
-      const category = await Category.create(cat);
-      categories.push(category);
+      categories.push(await Category.create(cat));
     }
-
     console.log('Categories created');
 
-    // Create admin user (password will be hashed by User model pre-save hook)
     const admin = await User.create({
       name: 'Admin User',
       email: 'admin@localify.com',
@@ -80,117 +122,6 @@ const seedData = async () => {
       phone: '9999999999'
     });
 
-    // Create sample users in Mumbai
-    const users = await User.create([
-      {
-        name: 'Rahul Sharma',
-        email: 'rahul@example.com',
-        password: 'user123',
-        role: 'user',
-        phone: '9876543210',
-        location: {
-          type: 'Point',
-          coordinates: [72.8362, 19.1364],
-          address: '123 Link Road, Andheri West',
-          city: 'Mumbai',
-          state: 'Maharashtra',
-          zipCode: '400053'
-        }
-      },
-      {
-        name: 'Priya Patel',
-        email: 'priya@example.com',
-        password: 'user123',
-        role: 'user',
-        phone: '9876543211',
-        location: {
-          type: 'Point',
-          coordinates: [72.8296, 19.0596],
-          address: '456 Hill Road, Bandra West',
-          city: 'Mumbai',
-          state: 'Maharashtra',
-          zipCode: '400050'
-        }
-      },
-      {
-        name: 'Amit Kumar',
-        email: 'amit@example.com',
-        password: 'user123',
-        role: 'user',
-        phone: '9876543212',
-        location: {
-          type: 'Point',
-          coordinates: [72.9052, 19.1176],
-          address: '789 Hiranandani Gardens, Powai',
-          city: 'Mumbai',
-          state: 'Maharashtra',
-          zipCode: '400076'
-        }
-      }
-    ]);
-
-    console.log('Users created');
-
-    // Provider data by category
-    const providerData = [
-      // Electricians
-      { name: 'Rajesh Kumar', email: 'rajesh.electric@example.com', business: 'Rajesh Electric Works', category: 0, location: 0, experience: 12, rating: 4.7, reviews: 156, jobs: 234 },
-      { name: 'Sunil Yadav', email: 'sunil.power@example.com', business: 'Power House Electricals', category: 0, location: 1, experience: 8, rating: 4.5, reviews: 89, jobs: 145 },
-      { name: 'Manoj Singh', email: 'manoj.electric@example.com', business: 'Singh Electrical Services', category: 0, location: 4, experience: 15, rating: 4.8, reviews: 203, jobs: 312 },
-      { name: 'Deepak Joshi', email: 'deepak.wire@example.com', business: 'Wire Masters', category: 0, location: 10, experience: 6, rating: 4.3, reviews: 67, jobs: 98 },
-      { name: 'Prakash Nair', email: 'prakash.electric@example.com', business: 'Nair Electricals', category: 0, location: 18, experience: 10, rating: 4.6, reviews: 124, jobs: 189 },
-      
-      // Plumbers
-      { name: 'Ramesh Gupta', email: 'ramesh.plumb@example.com', business: 'Gupta Plumbing Solutions', category: 1, location: 2, experience: 14, rating: 4.6, reviews: 178, jobs: 267 },
-      { name: 'Vijay Sharma', email: 'vijay.pipes@example.com', business: 'Quick Fix Plumbers', category: 1, location: 3, experience: 9, rating: 4.4, reviews: 92, jobs: 156 },
-      { name: 'Sanjay Patil', email: 'sanjay.plumb@example.com', business: 'Patil Plumbing Works', category: 1, location: 5, experience: 11, rating: 4.7, reviews: 145, jobs: 223 },
-      { name: 'Anil Thakur', email: 'anil.water@example.com', business: 'Thakur Plumbers', category: 1, location: 11, experience: 7, rating: 4.2, reviews: 56, jobs: 87 },
-      { name: 'Kiran Desai', email: 'kiran.plumb@example.com', business: 'Desai Plumbing Services', category: 1, location: 19, experience: 13, rating: 4.8, reviews: 189, jobs: 298 },
-      
-      // Carpenters
-      { name: 'Ashok Mishra', email: 'ashok.wood@example.com', business: 'Mishra Furniture Works', category: 2, location: 6, experience: 18, rating: 4.9, reviews: 234, jobs: 345 },
-      { name: 'Ravi Tiwari', email: 'ravi.carpenter@example.com', business: 'Tiwari Wood Crafts', category: 2, location: 7, experience: 10, rating: 4.5, reviews: 98, jobs: 167 },
-      { name: 'Mohan Das', email: 'mohan.wood@example.com', business: 'Das Carpentry', category: 2, location: 12, experience: 20, rating: 4.8, reviews: 267, jobs: 398 },
-      { name: 'Gopal Verma', email: 'gopal.furniture@example.com', business: 'Verma Furniture House', category: 2, location: 15, experience: 8, rating: 4.4, reviews: 76, jobs: 123 },
-      { name: 'Suresh Jain', email: 'suresh.wood@example.com', business: 'Jain Wood Works', category: 2, location: 16, experience: 12, rating: 4.6, reviews: 134, jobs: 212 },
-      
-      // AC Technicians
-      { name: 'Nikhil Shah', email: 'nikhil.ac@example.com', business: 'Cool Air Services', category: 3, location: 0, experience: 8, rating: 4.7, reviews: 145, jobs: 234 },
-      { name: 'Rohit Mehta', email: 'rohit.cooling@example.com', business: 'Mehta AC Repairs', category: 3, location: 3, experience: 6, rating: 4.3, reviews: 67, jobs: 112 },
-      { name: 'Vikram Reddy', email: 'vikram.ac@example.com', business: 'Reddy Cooling Solutions', category: 3, location: 8, experience: 12, rating: 4.8, reviews: 198, jobs: 312 },
-      { name: 'Santosh Iyer', email: 'santosh.ac@example.com', business: 'Iyer AC Services', category: 3, location: 13, experience: 9, rating: 4.5, reviews: 89, jobs: 156 },
-      { name: 'Dinesh Pillai', email: 'dinesh.cool@example.com', business: 'Pillai Cooling Works', category: 3, location: 17, experience: 7, rating: 4.4, reviews: 78, jobs: 134 },
-      
-      // Painters
-      { name: 'Rajan Nair', email: 'rajan.paint@example.com', business: 'Nair Painting Services', category: 4, location: 1, experience: 15, rating: 4.6, reviews: 167, jobs: 256 },
-      { name: 'Prem Kumar', email: 'prem.colors@example.com', business: 'Color Masters', category: 4, location: 4, experience: 10, rating: 4.4, reviews: 98, jobs: 167 },
-      { name: 'Arun Saxena', email: 'arun.paint@example.com', business: 'Saxena Paints', category: 4, location: 9, experience: 12, rating: 4.7, reviews: 145, jobs: 223 },
-      { name: 'Mahesh Kulkarni', email: 'mahesh.wall@example.com', business: 'Kulkarni Wall Designs', category: 4, location: 14, experience: 8, rating: 4.3, reviews: 67, jobs: 112 },
-      { name: 'Rajiv Shetty', email: 'rajiv.paint@example.com', business: 'Shetty Color House', category: 4, location: 18, experience: 14, rating: 4.8, reviews: 189, jobs: 287 },
-      
-      // Cleaners
-      { name: 'Lakshmi Devi', email: 'lakshmi.clean@example.com', business: 'Sparkle Clean Services', category: 5, location: 2, experience: 6, rating: 4.5, reviews: 123, jobs: 234 },
-      { name: 'Sunita Rao', email: 'sunita.clean@example.com', business: 'Rao Cleaning Solutions', category: 5, location: 5, experience: 8, rating: 4.7, reviews: 156, jobs: 289 },
-      { name: 'Geeta Sharma', email: 'geeta.home@example.com', business: 'Home Shine Cleaners', category: 5, location: 10, experience: 5, rating: 4.3, reviews: 78, jobs: 145 },
-      { name: 'Kavita Joshi', email: 'kavita.clean@example.com', business: 'Joshi Deep Clean', category: 5, location: 15, experience: 7, rating: 4.6, reviews: 112, jobs: 198 },
-      { name: 'Meena Patel', email: 'meena.clean@example.com', business: 'Patel Cleaning Co', category: 5, location: 19, experience: 9, rating: 4.8, reviews: 178, jobs: 312 },
-      
-      // Appliance Repair
-      { name: 'Satish Kumar', email: 'satish.repair@example.com', business: 'Kumar Appliance Repairs', category: 6, location: 0, experience: 11, rating: 4.6, reviews: 134, jobs: 212 },
-      { name: 'Harish Menon', email: 'harish.fix@example.com', business: 'Menon Repair Works', category: 6, location: 6, experience: 9, rating: 4.4, reviews: 89, jobs: 156 },
-      { name: 'Jitendra Singh', email: 'jitendra.tech@example.com', business: 'Singh Tech Repairs', category: 6, location: 11, experience: 13, rating: 4.8, reviews: 198, jobs: 298 },
-      { name: 'Arvind Rao', email: 'arvind.appliance@example.com', business: 'Rao Appliance Center', category: 6, location: 16, experience: 7, rating: 4.3, reviews: 67, jobs: 112 },
-      { name: 'Naresh Gupta', email: 'naresh.fix@example.com', business: 'Gupta Repair Hub', category: 6, location: 8, experience: 10, rating: 4.5, reviews: 112, jobs: 178 },
-      
-      // Pest Control
-      { name: 'Vinod Kapoor', email: 'vinod.pest@example.com', business: 'Kapoor Pest Control', category: 7, location: 1, experience: 10, rating: 4.7, reviews: 145, jobs: 234 },
-      { name: 'Sudhir Bose', email: 'sudhir.pest@example.com', business: 'Bose Pest Solutions', category: 7, location: 7, experience: 8, rating: 4.5, reviews: 98, jobs: 167 },
-      { name: 'Pradeep Chauhan', email: 'pradeep.bug@example.com', business: 'Chauhan Pest Services', category: 7, location: 12, experience: 12, rating: 4.8, reviews: 178, jobs: 278 },
-      { name: 'Umesh Thakkar', email: 'umesh.pest@example.com', business: 'Thakkar Pest Free', category: 7, location: 17, experience: 6, rating: 4.2, reviews: 56, jobs: 98 },
-      { name: 'Kishore Pandey', email: 'kishore.pest@example.com', business: 'Pandey Pest Control', category: 7, location: 9, experience: 9, rating: 4.6, reviews: 123, jobs: 189 }
-    ];
-
-    // Services pricing in INR by category
     const servicesByCategory = [
       // Electrician services (INR)
       [
@@ -258,60 +189,86 @@ const seedData = async () => {
       ]
     ];
 
-    // Create provider users and service providers
-    for (const provider of providerData) {
-      const loc = mumbaiLocations[provider.location];
-      
-      // Create user (password will be hashed by User model pre-save hook)
-      const user = await User.create({
-        name: provider.name,
-        email: provider.email,
-        password: 'provider123',
-        role: 'provider',
-        phone: `98${Math.floor(10000000 + Math.random() * 90000000)}`
-      });
+    let userCount = 0;
+    let providerCount = 0;
 
-      // Create service provider
-      const services = servicesByCategory[provider.category].map(service => ({
-        ...service,
-        category: categories[provider.category]._id
-      }));
-
-      await ServiceProvider.create({
-        user: user._id,
-        businessName: provider.business,
-        description: `Professional ${categories[provider.category].name.toLowerCase()} services in ${loc.area}, Mumbai. ${provider.experience} years of experience with quality work guaranteed. We serve all areas within 10km radius.`,
-        services,
+    for (const cityData of cities) {
+      // Create a test user in this city
+      const loc = cityData.areas[0];
+      await User.create({
+        name: `${cityData.city} User`,
+        email: `user.${cityData.city.toLowerCase()}@example.com`,
+        password: 'user123',
+        role: 'user',
+        phone: `98${Math.floor(10000000 + Math.random() * 90000000)}`,
         location: {
           type: 'Point',
           coordinates: loc.coordinates,
-          address: `${Math.floor(100 + Math.random() * 900)} ${loc.area} Main Road`,
-          city: 'Mumbai',
-          state: 'Maharashtra',
+          address: `123 Main Street, ${loc.area}`,
+          city: cityData.city,
+          state: cityData.state,
           zipCode: loc.zipCode
-        },
-        experience: provider.experience,
-        averageRating: provider.rating,
-        totalReviews: provider.reviews,
-        totalCompletedJobs: provider.jobs,
-        availability: {
-          isAvailable: true,
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
-          workingHours: { start: '08:00', end: '20:00' }
-        },
-        verificationStatus: 'verified'
+        }
       });
+
+      // Create providers across all categories for this city
+      for (let c = 0; c < categories.length; c++) {
+        const category = categories[c];
+        // Create 3 providers per category per city
+        for (let p = 0; p < 3; p++) {
+          const providerName = generateName();
+          const areaLoc = cityData.areas[Math.floor(Math.random() * cityData.areas.length)];
+          const experience = Math.floor(2 + Math.random() * 15);
+          
+          const providerUser = await User.create({
+            name: providerName,
+            email: `provider${providerCount}@example.com`,
+            password: 'provider123',
+            role: 'provider',
+            phone: `98${Math.floor(10000000 + Math.random() * 90000000)}`
+          });
+
+          const services = servicesByCategory[c].map(service => ({
+            ...service,
+            category: category._id
+          }));
+
+          await ServiceProvider.create({
+            user: providerUser._id,
+            businessName: generateBusiness(providerName, category.name),
+            description: `Professional ${category.name.toLowerCase()} services in ${areaLoc.area}, ${cityData.city}. ${experience} years of experience with quality work guaranteed. We serve all areas within 15km radius.`,
+            services,
+            location: {
+              type: 'Point',
+              coordinates: areaLoc.coordinates,
+              address: `${Math.floor(100 + Math.random() * 900)} ${areaLoc.area} Main Road`,
+              city: cityData.city,
+              state: cityData.state,
+              zipCode: areaLoc.zipCode
+            },
+            experience,
+            averageRating: (4 + Math.random()).toFixed(1),
+            totalReviews: Math.floor(50 + Math.random() * 200),
+            totalCompletedJobs: Math.floor(100 + Math.random() * 400),
+            availability: {
+              isAvailable: true,
+              workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+              workingHours: { start: '08:00', end: '20:00' }
+            },
+            verificationStatus: 'verified'
+          });
+          providerCount++;
+        }
+      }
     }
 
-    console.log('Service providers created (40 providers across all categories)');
-
+    console.log(`Successfully created ${providerCount} service providers across ${cities.length} cities.`);
     console.log('\n=== Seed Data Complete ===');
-    console.log('Location: Mumbai, Maharashtra');
-    console.log('Currency: Indian Rupees (INR)');
     console.log('\nLogin Credentials:');
     console.log('Admin: admin@localify.com / admin123');
-    console.log('User: rahul@example.com / user123');
-    console.log('Provider: rajesh.electric@example.com / provider123');
+    console.log('User (Mumbai): user.mumbai@example.com / user123');
+    console.log('User (Delhi): user.delhi@example.com / user123');
+    console.log('Provider (Generic): provider0@example.com / provider123');
 
     process.exit(0);
   } catch (error) {

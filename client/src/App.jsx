@@ -20,6 +20,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProviderRegister from './pages/ProviderRegister';
 import MyBookings from './pages/MyBookings';
 import BookingDetails from './pages/BookingDetails';
+import NotFound from './pages/NotFound';
 
 // Protected Route
 import ProtectedRoute from './components/ProtectedRoute';
@@ -102,6 +103,9 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />

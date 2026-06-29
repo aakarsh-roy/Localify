@@ -91,20 +91,36 @@ router.get('/', async (req, res) => {
       filter['services.category'] = category;
     }
 
-    // City filter
-    if (city) {
-      filter['location.city'] = new RegExp(escapeRegex(city), 'i');
-    }
+    const andConditions = [];
 
     // Search filter (sanitized regex)
     if (search) {
       const escaped = escapeRegex(search);
-      filter.$or = [
-        { businessName: new RegExp(escaped, 'i') },
-        { description: new RegExp(escaped, 'i') },
-        { 'services.name': new RegExp(escaped, 'i') },
-        { 'services.description': new RegExp(escaped, 'i') }
-      ];
+      andConditions.push({
+        $or: [
+          { businessName: new RegExp(escaped, 'i') },
+          { description: new RegExp(escaped, 'i') },
+          { 'services.name': new RegExp(escaped, 'i') },
+          { 'services.description': new RegExp(escaped, 'i') }
+        ]
+      });
+    }
+
+    // Location filter (using 'city' param for backwards compatibility)
+    if (city) {
+      const locationRegex = new RegExp(escapeRegex(city), 'i');
+      andConditions.push({
+        $or: [
+          { 'location.address': locationRegex },
+          { 'location.city': locationRegex },
+          { 'location.state': locationRegex },
+          { 'location.zipCode': locationRegex }
+        ]
+      });
+    }
+
+    if (andConditions.length > 0) {
+      filter.$and = andConditions;
     }
 
     // Rating filter

@@ -45,18 +45,18 @@ const StarRating = ({
           <Star
             className={`${sizes[size]} transition-colors duration-150 ${
               index < Math.floor(displayRating)
-                ? 'text-amber-400 fill-amber-400 drop-shadow-sm'
+                ? 'text-neutral-950 fill-neutral-950 drop-shadow-sm'
                 : index < displayRating
-                ? 'text-amber-400 fill-amber-400 opacity-50'
+                ? 'text-neutral-950 fill-neutral-950 opacity-50'
                 : interactive && hoverIndex >= 0
-                ? 'text-gray-300'
-                : 'text-gray-200'
+                ? 'text-neutral-300'
+                : 'text-neutral-200'
             }`}
           />
         </button>
       ))}
       {showValue && (
-        <span className="ml-1 text-sm font-semibold text-gray-700">
+        <span className="ml-1 text-sm font-semibold text-neutral-700">
           {rating.toFixed(1)}
         </span>
       )}

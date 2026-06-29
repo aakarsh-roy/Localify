@@ -1,4 +1,5 @@
 import React from 'react';
+import Skeleton from './Skeleton';
 
 const LoadingSpinner = ({ size = 'md', className = '', variant = 'spinner' }) => {
   const sizes = {
@@ -10,10 +11,10 @@ const LoadingSpinner = ({ size = 'md', className = '', variant = 'spinner' }) =>
 
   if (variant === 'skeleton') {
     return (
-      <div className={`animate-pulse space-y-4 ${className}`}>
-        <div className="skeleton h-48 rounded-2xl" />
-        <div className="skeleton h-4 w-3/4 rounded-lg" />
-        <div className="skeleton h-4 w-1/2 rounded-lg" />
+      <div className={`space-y-4 ${className}`}>
+        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
       </div>
     );
   }
@@ -24,7 +25,7 @@ const LoadingSpinner = ({ size = 'md', className = '', variant = 'spinner' }) =>
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="w-2.5 h-2.5 rounded-full bg-primary-500 animate-pulse-soft"
+            className="w-2.5 h-2.5 rounded-full bg-neutral-950 animate-pulse-soft"
             style={{ animationDelay: `${i * 150}ms` }}
           />
         ))}
@@ -35,7 +36,7 @@ const LoadingSpinner = ({ size = 'md', className = '', variant = 'spinner' }) =>
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <div
-        className={`${sizes[size]} rounded-full border-primary-200 border-t-primary-600 animate-spin`}
+        className={`${sizes[size]} rounded-full border-neutral-200 border-t-neutral-950 animate-spin`}
       />
     </div>
   );

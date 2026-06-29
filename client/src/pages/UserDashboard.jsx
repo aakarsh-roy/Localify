@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Calendar, Search, User, Settings, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../services/api';
 import BookingCard from '../components/bookings/BookingCard';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 
 const UserDashboard = () => {
   const { user } = useAuth();
@@ -43,123 +45,162 @@ const UserDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
+    <div className="min-h-screen bg-neutral-50/50 py-10">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 animate-fade-in-up">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="h-5 w-5 text-amber-400" />
-            <span className="text-sm font-medium text-primary-600">Dashboard</span>
+        <div className="mb-10 bg-white border border-neutral-200 rounded-3xl p-8 sm:p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-1.5 bg-neutral-950 rounded-lg">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-[11px] font-bold text-neutral-950 uppercase tracking-wider">Dashboard</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-neutral-950 tracking-tight mb-4">
+              Welcome back, {user?.name?.split(' ')[0]}!
+            </h1>
+            <p className="text-neutral-500 text-lg font-medium max-w-md">Here's what's happening with your bookings. Manage your appointments and track services easily.</p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {user?.name?.split(' ')[0]}!
-          </h1>
-          <p className="text-gray-500 mt-1">Here's what's happening with your bookings</p>
+          
+          <div className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
+            <div className="absolute inset-0 bg-gradient-to-tr from-neutral-200 to-transparent rounded-full blur-3xl opacity-50 -z-10" />
+            <motion.img 
+              src="/images/customer-banner.png" 
+              alt="Dashboard overview" 
+              className="w-full h-auto drop-shadow-xl"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            />
+          </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Link to="/search" className="card-interactive p-4 group">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
-                <Search className="h-6 w-6 text-primary-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Find Services</p>
-                <p className="text-sm text-gray-500">Browse providers</p>
-              </div>
-            </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          <Link to="/search" className="block group">
+            <Card className="hover:border-neutral-950 hover:shadow-subtle transition-all h-full bg-white border border-neutral-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-neutral-100 border border-neutral-200 rounded-xl flex items-center justify-center group-hover:bg-neutral-950 transition-colors">
+                    <Search className="h-5 w-5 text-neutral-950 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-neutral-950 tracking-tight">Find Services</p>
+                    <p className="text-sm text-neutral-500 font-medium">Browse providers</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link to="/my-bookings" className="card-interactive p-4 group">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
-                <Calendar className="h-6 w-6 text-emerald-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">My Bookings</p>
-                <p className="text-sm text-gray-500">{stats.total} total</p>
-              </div>
-            </div>
+          <Link to="/my-bookings" className="block group">
+            <Card className="hover:border-neutral-950 hover:shadow-subtle transition-all h-full bg-white border border-neutral-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-neutral-100 border border-neutral-200 rounded-xl flex items-center justify-center group-hover:bg-neutral-950 transition-colors">
+                    <Calendar className="h-5 w-5 text-neutral-950 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-neutral-950 tracking-tight">My Bookings</p>
+                    <p className="text-sm text-neutral-500 font-medium">{stats.total} total</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link to="/become-provider" className="card-interactive p-4 group">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl flex items-center justify-center group-hover:shadow-md transition-all">
-                <User className="h-6 w-6 text-violet-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Become Provider</p>
-                <p className="text-sm text-gray-500">Offer services</p>
-              </div>
-            </div>
+          <Link to="/become-provider" className="block group">
+            <Card className="hover:border-neutral-950 hover:shadow-subtle transition-all h-full bg-white border border-neutral-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-neutral-100 border border-neutral-200 rounded-xl flex items-center justify-center group-hover:bg-neutral-950 transition-colors">
+                    <User className="h-5 w-5 text-neutral-950 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-neutral-950 tracking-tight">Become Provider</p>
+                    <p className="text-sm text-neutral-500 font-medium">Offer services</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
 
-          <div className="card-interactive p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center">
-                <Settings className="h-6 w-6 text-gray-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Settings</p>
-                <p className="text-sm text-gray-500">Edit profile</p>
-              </div>
-            </div>
+          <div className="block group cursor-pointer">
+            <Card className="hover:border-neutral-950 hover:shadow-subtle transition-all h-full bg-white border border-neutral-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-neutral-100 border border-neutral-200 rounded-xl flex items-center justify-center group-hover:bg-neutral-950 transition-colors">
+                    <Settings className="h-5 w-5 text-neutral-950 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-neutral-950 tracking-tight">Settings</p>
+                    <p className="text-sm text-neutral-500 font-medium">Edit profile</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Bookings</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Pending</p>
-            <p className="text-3xl font-bold text-amber-600">{stats.pending}</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Completed</p>
-            <p className="text-3xl font-bold text-emerald-600">{stats.completed}</p>
-          </div>
+        <div className="grid sm:grid-cols-3 gap-5 mb-10">
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Total Bookings</p>
+              <p className="text-4xl font-extrabold text-neutral-950 tracking-tight">{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Pending</p>
+              <p className="text-4xl font-extrabold text-neutral-950 tracking-tight">{stats.pending}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Completed</p>
+              <p className="text-4xl font-extrabold text-neutral-950 tracking-tight">{stats.completed}</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Bookings */}
-        <div className="bg-white rounded-2xl shadow-card border border-gray-100">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">Recent Bookings</h2>
-            <Link to="/my-bookings" className="text-primary-600 hover:text-primary-700 text-sm font-medium inline-flex items-center gap-1 group">
+        <Card className="mb-8 bg-white border border-neutral-200 shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-neutral-100 pb-4">
+            <CardTitle className="tracking-tight">Recent Bookings</CardTitle>
+            <Link to="/my-bookings" className="text-neutral-950 hover:text-neutral-600 text-sm font-bold inline-flex items-center gap-1.5 group transition-colors">
               View All
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </div>
-          <div className="p-6">
+          </CardHeader>
+          <CardContent className="p-6">
             {bookings.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <Calendar className="h-7 w-7 text-gray-400" />
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-200">
+                  <Calendar className="h-8 w-8 text-neutral-400" />
                 </div>
-                <p className="text-gray-500 mb-2">No bookings yet</p>
-                <Link to="/search" className="text-primary-600 hover:text-primary-700 font-medium">
-                  Find a service provider
+                <h3 className="text-lg font-bold text-neutral-950 mb-2 tracking-tight">No bookings yet</h3>
+                <p className="text-neutral-500 font-medium mb-6">Ready to find a service provider?</p>
+                <Link to="/search" className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-neutral-950 text-white font-bold hover:bg-neutral-800 transition-colors shadow-subtle">
+                  Browse Services
                 </Link>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {bookings.slice(0, 3).map((booking) => (
                   <BookingCard key={booking._id} booking={booking} />
                 ))}
               </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

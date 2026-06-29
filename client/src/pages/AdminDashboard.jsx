@@ -22,6 +22,10 @@ import { adminAPI, categoryAPI } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import StarRating from '../components/ui/StarRating';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Avatar from '../components/ui/Avatar';
+import Badge from '../components/ui/Badge';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -180,68 +184,82 @@ const AdminDashboard = () => {
     { id: 'categories', label: 'Categories', icon: Shield }
   ];
 
+  const baseInputClass = "w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 bg-white text-neutral-950 outline-none transition-all placeholder:text-neutral-400 shadow-sm font-medium";
+
   const renderOverview = () => {
     if (!stats) return null;
     return (
       <div className="space-y-6">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-                <Users className="h-6 w-6 text-blue-600" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+                  <Users className="h-6 w-6 text-neutral-950" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Users</p>
+                  <p className="text-3xl font-extrabold text-neutral-950 tracking-tight">{stats.totalUsers || 0}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalUsers || 0}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+                  <Briefcase className="h-6 w-6 text-neutral-950" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Providers</p>
+                  <p className="text-3xl font-extrabold text-neutral-950 tracking-tight">{stats.totalProviders || 0}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl">
-                <Briefcase className="h-6 w-6 text-emerald-600" />
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+                  <Calendar className="h-6 w-6 text-neutral-950" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Bookings</p>
+                  <p className="text-3xl font-extrabold text-neutral-950 tracking-tight">{stats.totalBookings || 0}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Providers</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalProviders || 0}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+                  <Star className="h-6 w-6 text-neutral-950" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Reviews</p>
+                  <p className="text-3xl font-extrabold text-neutral-950 tracking-tight">{stats.totalReviews || 0}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl">
-                <Calendar className="h-6 w-6 text-violet-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Bookings</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalBookings || 0}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl">
-                <Star className="h-6 w-6 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Reviews</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalReviews || 0}</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Pending Verifications</h3>
-            <p className="text-3xl font-bold text-primary-600">{stats.pendingVerifications || 0}</p>
-            <p className="text-sm text-gray-500 mt-1">Providers awaiting verification</p>
-          </div>
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Pending Reviews</h3>
-            <p className="text-3xl font-bold text-amber-600">{stats.pendingReviews || 0}</p>
-            <p className="text-sm text-gray-500 mt-1">Reviews awaiting moderation</p>
-          </div>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-bold text-neutral-950 mb-4 text-lg tracking-tight">Pending Verifications</h3>
+              <p className="text-4xl font-extrabold text-neutral-950 tracking-tight">{stats.pendingVerifications || 0}</p>
+              <p className="text-sm font-medium text-neutral-500 mt-2">Providers awaiting verification</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-bold text-neutral-950 mb-4 text-lg tracking-tight">Pending Reviews</h3>
+              <p className="text-4xl font-extrabold text-neutral-950 tracking-tight">{stats.pendingReviews || 0}</p>
+              <p className="text-sm font-medium text-neutral-500 mt-2">Reviews awaiting moderation</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -251,69 +269,68 @@ const AdminDashboard = () => {
     <div className="space-y-4">
       <div className="flex gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             placeholder="Search users..."
-            className="input-field pl-10"
+            className={`${baseInputClass} pl-10`}
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
-          <thead className="bg-gray-50/80">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {users.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-                      <span className="text-primary-700 font-semibold">
-                        {user.name?.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2.5 py-1 text-xs font-semibold rounded-lg ${
-                    user.role === 'admin' ? 'bg-red-50 text-red-700 ring-1 ring-red-200/60' :
-                    user.role === 'provider' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200/60' :
-                    'bg-gray-50 text-gray-700 ring-1 ring-gray-200/60'
-                  }`}>
-                    {user.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button className="text-gray-500 hover:text-gray-700">
-                    <Eye className="h-5 w-5" />
-                  </button>
-                </td>
+      <Card className="overflow-hidden bg-white border border-neutral-200 shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-neutral-200">
+            <thead className="bg-neutral-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">User</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Role</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Joined</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {users.length === 0 && (
-          <div className="p-8 text-center text-gray-500">No users found</div>
-        )}
-      </div>
+            </thead>
+            <tbody className="bg-white divide-y divide-neutral-100">
+              {users.map((user) => (
+                <tr key={user._id} className="hover:bg-neutral-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <Avatar 
+                        fallback={user.name?.charAt(0).toUpperCase()} 
+                        size="sm"
+                      />
+                      <div className="text-sm font-bold text-neutral-950">{user.name}</div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-600">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Badge variant={
+                      user.role === 'admin' ? 'destructive' :
+                      user.role === 'provider' ? 'default' :
+                      'secondary'
+                    }>
+                      {user.role}
+                    </Badge>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-600">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button className="text-neutral-400 hover:text-neutral-950 transition-colors">
+                      <Eye className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {users.length === 0 && (
+            <div className="p-8 text-center text-neutral-500 font-medium">No users found</div>
+          )}
+        </div>
+      </Card>
 
       {totalPages > 1 && renderPagination()}
     </div>
@@ -321,21 +338,21 @@ const AdminDashboard = () => {
 
   const renderProviders = () => (
     <div className="space-y-4">
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             placeholder="Search providers..."
-            className="input-field pl-10"
+            className={`${baseInputClass} pl-10`}
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-          className="input-field w-40"
+          className={`${baseInputClass} sm:w-48 font-bold`}
         >
           <option value="all">All Status</option>
           <option value="verified">Verified</option>
@@ -343,64 +360,67 @@ const AdminDashboard = () => {
         </select>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
-          <thead className="bg-gray-50/80">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {providers.map((provider) => (
-              <tr key={provider._id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{provider.businessName}</div>
-                  <div className="text-sm text-gray-500">{provider.user?.email}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {provider.location?.city}, {provider.location?.state}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    <StarRating rating={provider.rating?.average || 0} size="sm" />
-                    <span className="text-sm text-gray-500">({provider.rating?.count || 0})</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {provider.isVerified ? (
-                    <span className="flex items-center gap-1 text-emerald-600 text-sm font-medium">
-                      <CheckCircle className="h-4 w-4" />
-                      Verified
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-amber-600 text-sm font-medium">
-                      <AlertCircle className="h-4 w-4" />
-                      Pending
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {!provider.isVerified && (
-                    <button 
-                      onClick={() => handleVerifyProvider(provider._id)}
-                      className="text-green-600 hover:text-green-700 font-medium"
-                    >
-                      Verify
-                    </button>
-                  )}
-                </td>
+      <Card className="overflow-hidden bg-white border border-neutral-200 shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-neutral-200">
+            <thead className="bg-neutral-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Provider</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Rating</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {providers.length === 0 && (
-          <div className="p-8 text-center text-gray-500">No providers found</div>
-        )}
-      </div>
+            </thead>
+            <tbody className="bg-white divide-y divide-neutral-100">
+              {providers.map((provider) => (
+                <tr key={provider._id} className="hover:bg-neutral-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-bold text-neutral-950">{provider.businessName}</div>
+                    <div className="text-sm font-medium text-neutral-500">{provider.user?.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-600">
+                    {provider.location?.city}, {provider.location?.state}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <StarRating rating={provider.rating?.average || 0} size="sm" />
+                      <span className="text-sm font-bold text-neutral-500">({provider.rating?.count || 0})</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {provider.isVerified ? (
+                      <span className="flex items-center gap-1.5 text-emerald-600 text-sm font-bold">
+                        <CheckCircle className="h-4.5 w-4.5" />
+                        Verified
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-amber-600 text-sm font-bold">
+                        <AlertCircle className="h-4.5 w-4.5" />
+                        Pending
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {!provider.isVerified && (
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleVerifyProvider(provider._id)}
+                      >
+                        Verify
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {providers.length === 0 && (
+            <div className="p-8 text-center text-neutral-500 font-medium">No providers found</div>
+          )}
+        </div>
+      </Card>
 
       {totalPages > 1 && renderPagination()}
     </div>
@@ -412,7 +432,7 @@ const AdminDashboard = () => {
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-          className="input-field w-40"
+          className={`${baseInputClass} sm:w-48 font-bold`}
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
@@ -423,45 +443,51 @@ const AdminDashboard = () => {
 
       <div className="space-y-4">
         {reviews.map((review) => (
-          <div key={review._id} className="card p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <StarRating rating={review.rating} size="sm" />
-                  <span className={`px-2.5 py-1 text-xs font-semibold rounded-lg ${
-                    review.status === 'approved' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60' :
-                    review.status === 'rejected' ? 'bg-red-50 text-red-700 ring-1 ring-red-200/60' :
-                    'bg-amber-50 text-amber-700 ring-1 ring-amber-200/60'
-                  }`}>
-                    {review.status}
-                  </span>
+          <Card key={review._id} className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <StarRating rating={review.rating} size="sm" />
+                    <Badge variant={
+                      review.status === 'approved' ? 'success' :
+                      review.status === 'rejected' ? 'destructive' :
+                      'warning'
+                    }>
+                      {review.status}
+                    </Badge>
+                  </div>
+                  <p className="text-neutral-700 font-medium leading-relaxed">{review.comment}</p>
+                  <p className="text-[10px] font-bold text-neutral-400 mt-3 uppercase tracking-wider">
+                    By {review.user?.name} • {new Date(review.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-                <p className="text-gray-700">{review.comment}</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  By {review.user?.name} • {new Date(review.createdAt).toLocaleDateString()}
-                </p>
+                {review.status === 'pending' && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleModerateReview(review._id, 'approved')}
+                      className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors border border-transparent hover:border-emerald-200"
+                      title="Approve"
+                    >
+                      <CheckCircle className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleModerateReview(review._id, 'rejected')}
+                      className="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-colors border border-transparent hover:border-red-200"
+                      title="Reject"
+                    >
+                      <XCircle className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
               </div>
-              {review.status === 'pending' && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleModerateReview(review._id, 'approved')}
-                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                  >
-                    <CheckCircle className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => handleModerateReview(review._id, 'rejected')}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                  >
-                    <XCircle className="h-5 w-5" />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
         {reviews.length === 0 && (
-          <div className="card p-8 text-center text-gray-500">No reviews found</div>
+          <Card className="bg-white border border-neutral-200 shadow-sm">
+            <CardContent className="p-8 text-center text-neutral-500 font-medium">No reviews found</CardContent>
+          </Card>
         )}
       </div>
 
@@ -472,145 +498,158 @@ const AdminDashboard = () => {
   const renderCategories = () => (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <button
+        <Button
+          variant="primary"
           onClick={() => { setShowCategoryForm(true); setEditingCategory(null); setCategoryForm({ name: '', description: '', icon: '' }); }}
-          className="btn-primary flex items-center gap-2"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-5 w-5 mr-1.5" />
           Add Category
-        </button>
+        </Button>
       </div>
 
       {showCategoryForm && (
-        <div className="card p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">
-            {editingCategory ? 'Edit Category' : 'Add New Category'}
-          </h3>
-          <form onSubmit={handleSaveCategory} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-              <input
-                type="text"
-                value={categoryForm.name}
-                onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
-                className="input-field"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                value={categoryForm.description}
-                onChange={(e) => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
-                className="input-field resize-none"
-                rows={3}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Icon (emoji)</label>
-              <input
-                type="text"
-                value={categoryForm.icon}
-                onChange={(e) => setCategoryForm(prev => ({ ...prev, icon: e.target.value }))}
-                className="input-field"
-                placeholder="⚡"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button type="submit" className="btn-primary">Save</button>
-              <button 
-                type="button" 
-                onClick={() => { setShowCategoryForm(false); setEditingCategory(null); }}
-                className="btn-outline"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+        <Card className="border-neutral-950 shadow-elevated bg-white">
+          <CardHeader className="border-b border-neutral-100 pb-4">
+            <CardTitle className="tracking-tight">
+              {editingCategory ? 'Edit Category' : 'Add New Category'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSaveCategory} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 mb-2 uppercase tracking-wider">Name</label>
+                <input
+                  type="text"
+                  value={categoryForm.name}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
+                  className={baseInputClass}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 mb-2 uppercase tracking-wider">Description</label>
+                <textarea
+                  value={categoryForm.description}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
+                  className={`${baseInputClass} resize-none`}
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 mb-2 uppercase tracking-wider">Icon (emoji)</label>
+                <input
+                  type="text"
+                  value={categoryForm.icon}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, icon: e.target.value }))}
+                  className={baseInputClass}
+                  placeholder="⚡"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" variant="primary">Save Category</Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => { setShowCategoryForm(false); setEditingCategory(null); }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       )}
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {categories.map((category) => (
-          <div key={category._id} className="card p-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-2xl mb-2">{category.icon || '📦'}</div>
-                <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                <p className="text-sm text-gray-500 mt-1">{category.description}</p>
+          <Card key={category._id} className="hover:border-neutral-950 hover:shadow-subtle transition-all group bg-white border border-neutral-200">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-neutral-100 border border-neutral-200 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                    {category.icon || '📦'}
+                  </div>
+                  <h3 className="font-bold text-neutral-950 text-lg tracking-tight">{category.name}</h3>
+                  <p className="text-sm font-medium text-neutral-500 mt-1">{category.description}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingCategory(category);
+                      setCategoryForm({ name: category.name, description: category.description, icon: category.icon });
+                      setShowCategoryForm(true);
+                    }}
+                    className="p-2 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 rounded-lg transition-colors border border-transparent hover:border-neutral-200"
+                    title="Edit"
+                  >
+                    <Edit className="h-4.5 w-4.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCategory(category._id)}
+                    className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4.5 w-4.5" />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => {
-                    setEditingCategory(category);
-                    setCategoryForm({ name: category.name, description: category.description, icon: category.icon });
-                    setShowCategoryForm(true);
-                  }}
-                  className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
-                >
-                  <Edit className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleDeleteCategory(category._id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
   );
 
   const renderPagination = () => (
-    <div className="flex justify-center gap-2">
-      <button
+    <div className="flex justify-center gap-3 pt-4">
+      <Button
+        variant="outline"
         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
-        className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="px-3"
       >
         <ChevronLeft className="h-5 w-5" />
-      </button>
-      <span className="py-2 px-4 text-sm font-medium text-gray-700">
+      </Button>
+      <span className="py-2 px-4 text-sm font-bold text-neutral-700 bg-white border border-neutral-200 rounded-xl shadow-sm">
         Page {currentPage} of {totalPages}
       </span>
-      <button
+      <Button
+        variant="outline"
         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
         disabled={currentPage === totalPages}
-        className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="px-3"
       >
         <ChevronRight className="h-5 w-5" />
-      </button>
+      </Button>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md">
-            <Shield className="h-5 w-5 text-white" />
+    <div className="min-h-screen bg-neutral-50/50 py-10">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 animate-fade-in-up">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="w-12 h-12 bg-neutral-950 rounded-[12px] flex items-center justify-center shadow-subtle">
+            <Shield className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-3xl font-extrabold text-neutral-950 tracking-tight">Admin Dashboard</h1>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 hide-scrollbar">
           {tabs.map((tab) => {
             const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => { setActiveTab(tab.id); setCurrentPage(1); setStatusFilter('all'); setSearchTerm(''); }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all shadow-sm border ${
+                  isActive
+                    ? 'bg-neutral-950 text-white border-neutral-950'
+                    : 'bg-white text-neutral-600 hover:bg-neutral-50 hover:text-neutral-950 border-neutral-200'
                 }`}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-neutral-400'}`} />
                 {tab.label}
               </button>
             );
@@ -619,7 +658,7 @@ const AdminDashboard = () => {
 
         {/* Content */}
         {loading ? (
-          <div className="flex justify-center py-12">
+          <div className="flex justify-center py-20">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
